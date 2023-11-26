@@ -10,4 +10,8 @@ public interface CourseService {
     void addNewCourse (Course course);
 
     List<CourseDTO> getAllCourse();
+
+    // Bikin Update Courses
+
+    void deleteCourseByCourseCode(String codeCourse);
 }

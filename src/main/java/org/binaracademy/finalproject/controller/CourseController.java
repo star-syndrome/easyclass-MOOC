@@ -1,5 +1,6 @@
 package org.binaracademy.finalproject.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.Course;
@@ -29,5 +30,12 @@ public class CourseController {
     public ResponseEntity<List<CourseDTO>> getAllCourse(){
         return ResponseEntity.ok()
                 .body(courseService.getAllCourse());
+    }
+
+    @DeleteMapping(value = "/deleteCourse/{codeCourse}")
+    @Operation(summary = "Delete data at course_category first, after that delete course")
+    public ResponseEntity<String> deleteCourse(@RequestParam String codeCourse){
+        courseService.deleteCourseByCourseCode(codeCourse);
+        return ResponseEntity.ok().body("Course with code: " + codeCourse + " successfully deleted");
     }
 }

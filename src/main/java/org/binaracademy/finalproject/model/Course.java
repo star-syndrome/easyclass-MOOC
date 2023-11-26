@@ -28,6 +28,8 @@ public class Course {
 
     private String titleCourse;
 
+    private String codeCourse;
+
     private Double priceCourse;
 
     private String levelCourse;
@@ -37,7 +39,7 @@ public class Course {
     private Boolean isPremium;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "course_catroles",
+    @JoinTable(name = "course_category",
             joinColumns = @JoinColumn(name = "course_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
