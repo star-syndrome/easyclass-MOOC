@@ -1,7 +1,6 @@
 package org.binaracademy.finalproject.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.service.CourseService;
@@ -19,23 +18,30 @@ public class CourseController {
     @Autowired
     CourseService courseService;
 
-    @PostMapping(value = "/addCourse", consumes = "application/json")
+    @PostMapping(value = "/add", consumes = "application/json")
     public ResponseEntity<String> addCourse(@RequestBody Course course){
         courseService.addNewCourse(course);
         return ResponseEntity.ok()
                 .body("Add new course successfully!");
     }
 
-    @GetMapping(value = "/getAllCourse")
+    @GetMapping(value = "/get")
     public ResponseEntity<List<CourseDTO>> getAllCourse(){
         return ResponseEntity.ok()
                 .body(courseService.getAllCourse());
     }
 
-    @DeleteMapping(value = "/deleteCourse/{codeCourse}")
+    @DeleteMapping(value = "/delete/{codeCourse}")
     @Operation(summary = "Delete data at course_category first, after that delete course")
-    public ResponseEntity<String> deleteCourse(@RequestParam String codeCourse){
-        courseService.deleteCourseByCourseCode(codeCourse);
+    public ResponseEntity<String> deleteCourse(@PathVariable String codeCourse){
+        courseService.deleteCourseByCode(codeCourse);
         return ResponseEntity.ok().body("Course with code: " + codeCourse + " successfully deleted");
+    }
+
+    @PutMapping(value = "/update/{code}")
+    public ResponseEntity<CourseDTO> updateCourse(@PathVariable String code,
+                                                  @RequestBody Course course){
+        return ResponseEntity.ok()
+                .body(courseService.updateCourse(course,code));
     }
 }

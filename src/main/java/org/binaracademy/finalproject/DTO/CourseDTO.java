@@ -10,7 +10,6 @@ import java.util.Set;
 @Builder
 public class CourseDTO {
 
-    private String about;
     private String title;
     private String code;
     private Double price;

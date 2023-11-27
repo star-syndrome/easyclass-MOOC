@@ -12,11 +12,9 @@ import java.util.Optional;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, String> {
 
-    Optional<Course> findByTitleCourse(String titleCourse);
-
-    Course findByCodeCourse(String codeCourse);
+    Optional<Course> findByCodeCourse(String codeCourse);
 
     @Modifying
     @Query(nativeQuery = true, value = "delete from course where code_course = :codeCourse")
-    void deleteByCourseCode(@Param("codeCourse") String codeCourse);
+    void deleteByCode(@Param("codeCourse") String codeCourse);
 }

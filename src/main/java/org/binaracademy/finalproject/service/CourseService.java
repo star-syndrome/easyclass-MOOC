@@ -11,7 +11,8 @@ public interface CourseService {
 
     List<CourseDTO> getAllCourse();
 
-    // Bikin Update Courses
+    CourseDTO updateCourse(Course course, String code);
 
-    void deleteCourseByCourseCode(String codeCourse);
+    // Harus delete course_category (dari many to many) dulu, baru bisa hapus course
+    void deleteCourseByCode(String codeCourse);
 }

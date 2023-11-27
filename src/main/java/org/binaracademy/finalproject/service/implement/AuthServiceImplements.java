@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class AuthServiceImplement implements AuthService {
+public class AuthServiceImplements implements AuthService {
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -44,7 +44,7 @@ public class AuthServiceImplement implements AuthService {
     @Autowired
     JwtUtils jwtUtils;
 
-    public AuthServiceImplement (AuthenticationManager authenticationManager, UserRepository usersRepository,
+    public AuthServiceImplements(AuthenticationManager authenticationManager, UserRepository usersRepository,
                                  JwtUtils jwtUtils, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.usersRepository = usersRepository;
