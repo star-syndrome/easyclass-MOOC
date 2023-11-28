@@ -70,7 +70,8 @@ public class AuthServiceImplements implements AuthService {
         }
 
         Users users = new Users(signupRequest.getUsername(), signupRequest.getEmail(),
-                passwordEncoder.encode(signupRequest.getPassword()));
+                passwordEncoder.encode(signupRequest.getPassword()), signupRequest.getPhoneNumber(),
+                signupRequest.getCountry(), signupRequest.getCity(), signupRequest.getLinkProfilePicture());
 
         Set<String> strRoles = signupRequest.getRole();
         Set<Roles> roles = new HashSet<>();

@@ -92,6 +92,8 @@ public class CourseServiceImplements implements CourseService {
             if (!Optional.ofNullable(course).isPresent()){
                 log.info("Courses is not available");
             }
+            assert course != null;
+            course.getCategories().clear();
             courseRepository.deleteByCode(codeCourse);
             log.info("Deleting courses with course code: {} successful!", codeCourse);
         } catch (Exception e) {

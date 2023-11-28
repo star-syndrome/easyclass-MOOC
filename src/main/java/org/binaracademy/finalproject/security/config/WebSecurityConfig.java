@@ -39,10 +39,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/**", "/api/auth/**", "/swagger-ui.html", "/swagger-ui/**",
-                        "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
-                .antMatchers("/").hasAuthority(ERole.ROLE_ADMIN.name())
-                .antMatchers("/").hasAuthority(ERole.ROLE_USER.name())
+                .antMatchers("/api/auth/**", "/api/course/get", "/api/subject/get", "/swagger-ui.html",
+                        "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
+                .antMatchers("/api/course/add","/api/course/update", "/api/course/delete",
+                        "/api/subject/add", "/api/subject/update", "/api/subject/delete").hasAuthority(ERole.ROLE_ADMIN.name())
+                .antMatchers().hasAuthority(ERole.ROLE_USER.name())
                 .anyRequest()
                 .authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

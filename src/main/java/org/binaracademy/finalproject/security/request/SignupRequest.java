@@ -29,4 +29,18 @@ public class SignupRequest {
     @NotBlank
     @Size(min = 6, max = 20)
     private String password;
+
+    @NotBlank
+    @Size(max = 15)
+    private String phoneNumber;
+
+    @NotBlank
+    @Size(max = 50)
+    public String country;
+
+    @NotBlank
+    @Size(max = 50)
+    public String city;
+
+    private String linkProfilePicture;
 }

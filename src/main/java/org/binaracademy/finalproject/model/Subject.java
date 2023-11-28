@@ -25,6 +25,8 @@ public class Subject {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    private String code;
+
     private String title;
 
     private String linkVideo;

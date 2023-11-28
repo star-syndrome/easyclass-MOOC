@@ -23,10 +23,15 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")})
 public class Users {
 
-    public Users(String username, String email, String password) {
+    public Users(String username, String email, String password, String phoneNumber,
+                 String country, String city, String linkProfilePicture) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.country = country;
+        this.city = city;
+        this.linkProfilePicture = linkProfilePicture;
     }
 
     @Id
@@ -45,6 +50,20 @@ public class Users {
     @NotBlank
     @Size(max = 120)
     private String password;
+
+    @NotBlank
+    @Size(max = 15)
+    private String phoneNumber;
+
+    @NotBlank
+    @Size(max = 50)
+    public String country;
+
+    @NotBlank
+    @Size(max = 50)
+    public String city;
+
+    private String linkProfilePicture;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
