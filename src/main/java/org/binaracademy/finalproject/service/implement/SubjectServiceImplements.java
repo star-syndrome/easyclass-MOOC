@@ -21,6 +21,16 @@ public class SubjectServiceImplements implements SubjectService {
     @Autowired
     SubjectRepository subjectRepository;
 
+    private SubjectDTO toSubjectDTO(Subject subject) {
+        return SubjectDTO.builder()
+                .title(subject.getTitle())
+                .code(subject.getCode())
+                .description(subject.getDescription())
+                .isPremium(subject.getIsPremium())
+                .link(subject.getLinkVideo())
+                .build();
+    }
+
     @Override
     public void addSubject(Subject subject) {
         log.info("Process of adding new subject");
@@ -44,45 +54,36 @@ public class SubjectServiceImplements implements SubjectService {
     public List<SubjectDTO> getAllSubject() {
         log.info("Getting all of list subject!");
         return subjectRepository.findAll().stream()
-                .map(subject -> SubjectDTO.builder()
-                        .title(subject.getTitle())
-                        .description(subject.getDescription())
-                        .isPremium(subject.getIsPremium())
-                        .link(subject.getLinkVideo())
-                        .build())
+                .map(this::toSubjectDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public SubjectDTO updateSubject(Subject subject, String title) {
+    public SubjectDTO updateSubject(Subject subject, String code) {
         log.info("Process updating subject");
-         Subject subject1 = subjectRepository.findByTitle(title)
+         Subject subject1 = subjectRepository.findByCode(code)
                  .orElseThrow(() -> new RuntimeException("Subject not found"));
 
          subject1.setTitle(subject.getTitle());
+         subject1.setCode(subject.getCode());
          subject1.setDescription(subject.getDescription());
          subject1.setLinkVideo(subject.getLinkVideo());
          subject1.setIsPremium(subject.getIsPremium());
          subjectRepository.save(subject1);
-         log.info("Updating subject with title: " + title + " successfully!");
+         log.info("Updating subject with code: " + code + " successfully!");
 
-         return SubjectDTO.builder()
-                 .title(subject1.getTitle())
-                 .description(subject1.getDescription())
-                 .link(subject1.getLinkVideo())
-                 .isPremium(subject1.getIsPremium())
-                 .build();
+         return toSubjectDTO(subject1);
     }
 
     @Override
-    public void deleteSubjectByTitle(String title) {
+    public void deleteSubjectByCode(String code) {
         try {
-            Subject subject = subjectRepository.findByTitle(title).orElse(null);
+            Subject subject = subjectRepository.findByCode(code).orElse(null);
             if (!Optional.ofNullable(subject).isPresent()){
                 log.info("Subject is not available");
             }
-            subjectRepository.deleteSubjectByTitle(title);
-            log.info("Deleted subject successfully!");
+            subjectRepository.deleteSubjectByCode(code);
+            log.info("Deleted subject where subject code: " + code + " successfully!");
         } catch (Exception e) {
             log.error("Deleting subject failed, please try again!");
         }

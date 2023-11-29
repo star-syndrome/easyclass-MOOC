@@ -21,22 +21,34 @@ public class CourseServiceImplements implements CourseService {
     @Autowired
     CourseRepository courseRepository;
 
+    private CourseDTO toCourseDTO(Course course) {
+        return CourseDTO.builder()
+                .title(course.getTitleCourse())
+                .categories(course.getCategories())
+                .code(course.getCodeCourse())
+                .level(course.getLevelCourse())
+                .price(course.getPriceCourse())
+                .isPremium(course.getIsPremium())
+                .teacher(course.getTeacher())
+                .build();
+    }
+
     @Override
     public void addNewCourse(Course course) {
-        log.info("Process of adding new courses");
+        log.info("Process of adding new course");
         Optional.ofNullable(course)
                 .map(newProduct -> courseRepository.save(course))
                 .map(result -> {
                     boolean isSuccess = true;
-                    log.info("Successfully added a new courses with name: {}", course.getTitleCourse());
+                    log.info("Successfully added a new course with name: {}", course.getTitleCourse());
                     return isSuccess;
                 })
                 .orElseGet(() -> {
-                    log.info("Failed to add new courses");
+                    log.info("Failed to add new course");
                     return Boolean.FALSE;
                 });
         assert course != null;
-        log.info("Process of adding a new courses is complete, new courses: {}", course.getTitleCourse());
+        log.info("Process of adding a new course is completed, new course: {}", course.getTitleCourse());
     }
 
     @Override
@@ -44,21 +56,13 @@ public class CourseServiceImplements implements CourseService {
     public List<CourseDTO> getAllCourse() {
         log.info("Getting all of list courses!");
         return courseRepository.findAll().stream()
-                .map(course -> CourseDTO.builder()
-                        .title(course.getTitleCourse())
-                        .categories(course.getCategories())
-                        .code(course.getCodeCourse())
-                        .level(course.getLevelCourse())
-                        .price(course.getPriceCourse())
-                        .isPremium(course.getIsPremium())
-                        .teacher(course.getTeacher())
-                        .build())
+                .map(this::toCourseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public CourseDTO updateCourse(Course course, String code) {
-        log.info("Process updating courses");
+        log.info("Process updating course");
         Course course1 = courseRepository.findByCodeCourse(code)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
@@ -71,33 +75,26 @@ public class CourseServiceImplements implements CourseService {
         course1.setTeacher(course.getTeacher());
         course1.setCategories(course.getCategories());
         courseRepository.save(course1);
-        log.info("Updating courses with code: " + code + " successfully!");
+        log.info("Updating course with code: " + code + " successful!");
 
-        return CourseDTO.builder()
-                .title(course1.getTitleCourse())
-                .categories(course1.getCategories())
-                .code(course1.getCodeCourse())
-                .level(course1.getLevelCourse())
-                .price(course1.getPriceCourse())
-                .isPremium(course1.getIsPremium())
-                .teacher(course1.getTeacher())
-                .build();
+        return toCourseDTO(course1);
     }
 
     @Override
     public void deleteCourseByCode(String codeCourse) {
         try {
-            log.info("Process of deleting a courses");
+            log.info("Process of deleting a course");
             Course course = courseRepository.findByCodeCourse(codeCourse).orElse(null);
             if (!Optional.ofNullable(course).isPresent()){
-                log.info("Courses is not available");
+                log.info("Course is not available");
             }
             assert course != null;
             course.getCategories().clear();
+            course.getSubjects().clear();
             courseRepository.deleteByCode(codeCourse);
-            log.info("Deleting courses with course code: {} successful!", codeCourse);
+            log.info("Deleting the course with course code: {} successful!", codeCourse);
         } catch (Exception e) {
-            log.error("Deleting courses failed, please try again!");
+            log.error("Deleting course failed, please try again!");
             throw e;
         }
     }

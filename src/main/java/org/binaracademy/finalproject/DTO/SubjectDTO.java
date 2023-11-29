@@ -9,6 +9,7 @@ import org.binaracademy.finalproject.model.Course;
 public class SubjectDTO {
 
     private String title;
+    private String code;
     private String link;
     private String description;
     private Boolean isPremium;

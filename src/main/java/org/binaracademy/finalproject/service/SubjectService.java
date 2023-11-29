@@ -11,7 +11,7 @@ public interface SubjectService {
 
     List<SubjectDTO> getAllSubject();
 
-    SubjectDTO updateSubject(Subject subject, String title);
+    SubjectDTO updateSubject(Subject subject, String code);
 
-    void deleteSubjectByTitle(String title);
+    void deleteSubjectByCode(String code);
 }
