@@ -1,20 +1,21 @@
 package org.binaracademy.finalproject.DTO;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.binaracademy.finalproject.model.Category;
+import lombok.NoArgsConstructor;
+import org.binaracademy.finalproject.model.response.CourseResponse;
+import org.binaracademy.finalproject.model.response.SubjectResponse;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CourseDTO {
 
-    private String title;
-    private String code;
-    private Double price;
-    private String level;
-    private String teacher;
-    private Boolean isPremium;
-    private Set<Category> categories;
+    private CourseResponse courseResponse;
+    private List<SubjectResponse> subjectResponse;
+    private String aboutCourse;
 }

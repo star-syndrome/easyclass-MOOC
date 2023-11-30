@@ -1,13 +1,15 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
-import org.binaracademy.finalproject.DTO.SubjectDTO;
+import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Subject;
 import org.binaracademy.finalproject.repository.SubjectRepository;
 import org.binaracademy.finalproject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +23,8 @@ public class SubjectServiceImplements implements SubjectService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    private SubjectDTO toSubjectDTO(Subject subject) {
-        return SubjectDTO.builder()
+    private SubjectResponse toSubjectResponse(Subject subject) {
+        return SubjectResponse.builder()
                 .title(subject.getTitle())
                 .code(subject.getCode())
                 .description(subject.getDescription())
@@ -51,18 +53,18 @@ public class SubjectServiceImplements implements SubjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SubjectDTO> getAllSubject() {
+    public List<SubjectResponse> getAllSubject() {
         log.info("Getting all of list subject!");
         return subjectRepository.findAll().stream()
-                .map(this::toSubjectDTO)
+                .map(this::toSubjectResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public SubjectDTO updateSubject(Subject subject, String code) {
+    public SubjectResponse updateSubject(Subject subject, String code) {
         log.info("Process updating subject");
          Subject subject1 = subjectRepository.findByCode(code)
-                 .orElseThrow(() -> new RuntimeException("Subject not found"));
+                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found"));
 
          subject1.setTitle(subject.getTitle());
          subject1.setCode(subject.getCode());
@@ -72,7 +74,7 @@ public class SubjectServiceImplements implements SubjectService {
          subjectRepository.save(subject1);
          log.info("Updating subject with code: " + code + " successfully!");
 
-         return toSubjectDTO(subject1);
+         return toSubjectResponse(subject1);
     }
 
     @Override

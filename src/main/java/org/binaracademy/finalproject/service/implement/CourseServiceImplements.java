@@ -1,7 +1,9 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.DTO.CourseDTO;
+import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.service.CourseService;
@@ -21,8 +23,8 @@ public class CourseServiceImplements implements CourseService {
     @Autowired
     CourseRepository courseRepository;
 
-    private CourseDTO toCourseDTO(Course course) {
-        return CourseDTO.builder()
+    private CourseResponse toCourseResponse(Course course) {
+        return CourseResponse.builder()
                 .title(course.getTitleCourse())
                 .categories(course.getCategories())
                 .code(course.getCodeCourse())
@@ -53,15 +55,15 @@ public class CourseServiceImplements implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CourseDTO> getAllCourse() {
+    public List<CourseResponse> getAllCourse() {
         log.info("Getting all of list courses!");
         return courseRepository.findAll().stream()
-                .map(this::toCourseDTO)
+                .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CourseDTO updateCourse(Course course, String code) {
+    public CourseResponse updateCourse(Course course, String code) {
         log.info("Process updating course");
         Course course1 = courseRepository.findByCodeCourse(code)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
@@ -77,7 +79,7 @@ public class CourseServiceImplements implements CourseService {
         courseRepository.save(course1);
         log.info("Updating course with code: " + code + " successful!");
 
-        return toCourseDTO(course1);
+        return toCourseResponse(course1);
     }
 
     @Override
@@ -97,5 +99,36 @@ public class CourseServiceImplements implements CourseService {
             log.error("Deleting course failed, please try again!");
             throw e;
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CourseDTO courseDetails(String titleCourse) {
+        log.info("Getting course detail information from course " + titleCourse);
+        return Optional.ofNullable(courseRepository.findByTitleCourse(titleCourse))
+                .map(courses -> CourseDTO.builder()
+                        .aboutCourse(courses.getAboutCourse())
+                        .courseResponse(CourseResponse.builder()
+                                .code(courses.getCodeCourse())
+                                .title(courses.getTitleCourse())
+                                .price(courses.getPriceCourse())
+                                .teacher(courses.getTeacher())
+                                .isPremium(courses.getIsPremium())
+                                .categories(courses.getCategories())
+                                .level(courses.getLevelCourse())
+                                .build())
+                        .subjectResponse(courses.getSubjects().stream()
+                                .map(subject -> {
+                                    SubjectResponse subjectResponse = new SubjectResponse();
+                                    subjectResponse.setCode(subject.getCode());
+                                    subjectResponse.setTitle(subject.getTitle());
+                                    subjectResponse.setDescription(subject.getDescription());
+                                    subjectResponse.setIsPremium(subject.getIsPremium());
+                                    subjectResponse.setLink(subject.getLinkVideo());
+                                    return subjectResponse;
+                                })
+                                .collect(Collectors.toList()))
+                        .build())
+                .orElse(null);
     }
 }

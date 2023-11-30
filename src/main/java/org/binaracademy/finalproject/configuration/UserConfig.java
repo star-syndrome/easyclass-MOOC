@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Slf4j
-public class ConfigUser {
-    ConfigUser (RoleRepository roleRepository) {
+public class UserConfig {
+    UserConfig(RoleRepository roleRepository) {
         log.info("Checking roles presented");
         for(ERole c : ERole.values()) {
             try {

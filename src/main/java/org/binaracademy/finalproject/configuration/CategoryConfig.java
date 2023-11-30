@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Slf4j
-public class ConfigCategory {
-    ConfigCategory (CategoryRepository categoryRepository){
+public class CategoryConfig {
+    CategoryConfig(CategoryRepository categoryRepository){
         log.info("Checking category roles presented");
         for (CategoryRole cr : CategoryRole.values()) {
             try {

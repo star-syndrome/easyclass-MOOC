@@ -1,12 +1,15 @@
-package org.binaracademy.finalproject.DTO;
+package org.binaracademy.finalproject.model.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.binaracademy.finalproject.model.Course;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class SubjectDTO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class SubjectResponse {
 
     private String title;
     private String code;
