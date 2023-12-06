@@ -34,7 +34,7 @@ public class SubjectServiceImplements implements SubjectService {
     }
 
     @Override
-    public void addSubject(Subject subject) {
+    public SubjectResponse addSubject(Subject subject) {
         log.info("Process of adding new subject");
         Optional.ofNullable(subject)
                 .map(newProduct -> subjectRepository.save(subject))
@@ -49,6 +49,7 @@ public class SubjectServiceImplements implements SubjectService {
                 });
         assert subject != null;
         log.info("Process of adding a new subject is complete, new subject: {}", subject.getTitle());
+        return toSubjectResponse(subject);
     }
 
     @Override

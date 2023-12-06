@@ -1,4 +1,4 @@
-package org.binaracademy.finalproject.security.request;
+package org.binaracademy.finalproject.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,35 +8,32 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.Set;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignupRequest {
+public class GetUserResponse {
+
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(max = 20)
     private String username;
 
     @NotBlank
+    @Size(max = 50)
     @Email
     private String email;
-
-    private Set<String> role;
-
-    @NotBlank
-    @Size(min = 6, max = 20)
-    private String password;
 
     @NotBlank
     @Size(max = 15)
     private String phoneNumber;
 
+    @NotBlank
     @Size(max = 50)
     public String country;
 
+    @NotBlank
     @Size(max = 50)
     public String city;
 

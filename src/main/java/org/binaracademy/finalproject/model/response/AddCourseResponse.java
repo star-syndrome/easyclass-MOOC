@@ -12,8 +12,9 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseResponse {
+public class AddCourseResponse {
 
+    private String about;
     private String title;
     private String code;
     private Double price;

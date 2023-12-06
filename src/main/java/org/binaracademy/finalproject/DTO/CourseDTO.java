@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.model.response.SubjectResponse;
+import org.binaracademy.finalproject.model.response.AddCourseResponse;
 
 import java.util.List;
 
@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CourseDTO {
 
-    private CourseResponse courseResponse;
+    private AddCourseResponse addCourseResponse;
     private List<SubjectResponse> subjectResponse;
-    private String aboutCourse;
 }

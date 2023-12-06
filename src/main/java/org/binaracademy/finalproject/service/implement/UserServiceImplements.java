@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.response.GetUserResponse;
 import org.binaracademy.finalproject.model.response.UserResponse;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
 import org.binaracademy.finalproject.model.Users;
@@ -11,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -29,6 +32,17 @@ public class UserServiceImplements implements UserService {
                 .username(users.getUsername())
                 .email(users.getEmail())
                 .password(users.getPassword())
+                .phoneNumber(users.getPhoneNumber())
+                .country(users.getCountry())
+                .city(users.getCity())
+                .linkProfilePicture(users.getLinkProfilePicture())
+                .build();
+    }
+
+    private GetUserResponse getUserResponse(Users users) {
+        return GetUserResponse.builder()
+                .username(users.getUsername())
+                .email(users.getEmail())
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
@@ -69,5 +83,14 @@ public class UserServiceImplements implements UserService {
         } catch (Exception e){
             log.error("Deleting user failed, please try again!");
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetUserResponse> getAllUser() {
+        log.info("Getting all of list user");
+        return userRepository.findAll().stream()
+                .map(this::getUserResponse)
+                .collect(Collectors.toList());
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SubjectService {
 
-    void addSubject (Subject subject);
+    SubjectResponse addSubject (Subject subject);
 
     List<SubjectResponse> getAllSubject();
 

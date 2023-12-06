@@ -5,6 +5,7 @@ import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Course;
+import org.binaracademy.finalproject.model.response.AddCourseResponse;
 import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,21 @@ public class CourseServiceImplements implements CourseService {
                 .build();
     }
 
+    private AddCourseResponse toAddCourseResponse(Course course) {
+        return AddCourseResponse.builder()
+                .about(course.getAboutCourse())
+                .title(course.getTitleCourse())
+                .categories(course.getCategories())
+                .code(course.getCodeCourse())
+                .level(course.getLevelCourse())
+                .price(course.getPriceCourse())
+                .isPremium(course.getIsPremium())
+                .teacher(course.getTeacher())
+                .build();
+    }
+
     @Override
-    public void addNewCourse(Course course) {
+    public AddCourseResponse addNewCourse(Course course) {
         log.info("Process of adding new course");
         Optional.ofNullable(course)
                 .map(newProduct -> courseRepository.save(course))
@@ -51,6 +65,7 @@ public class CourseServiceImplements implements CourseService {
                 });
         assert course != null;
         log.info("Process of adding a new course is completed, new course: {}", course.getTitleCourse());
+        return toAddCourseResponse(course);
     }
 
     @Override
@@ -107,15 +122,15 @@ public class CourseServiceImplements implements CourseService {
         log.info("Getting course detail information from course " + titleCourse);
         return Optional.ofNullable(courseRepository.findByTitleCourse(titleCourse))
                 .map(courses -> CourseDTO.builder()
-                        .aboutCourse(courses.getAboutCourse())
-                        .courseResponse(CourseResponse.builder()
+                        .addCourseResponse(AddCourseResponse.builder()
+                                .about(courses.getAboutCourse())
                                 .code(courses.getCodeCourse())
                                 .title(courses.getTitleCourse())
                                 .price(courses.getPriceCourse())
                                 .teacher(courses.getTeacher())
+                                .level(courses.getLevelCourse())
                                 .isPremium(courses.getIsPremium())
                                 .categories(courses.getCategories())
-                                .level(courses.getLevelCourse())
                                 .build())
                         .subjectResponse(courses.getSubjects().stream()
                                 .map(subject -> {

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "subject")
+@Table(name = "subject", uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public class Subject {
 
     @Id
