@@ -1,5 +1,6 @@
 package org.binaracademy.finalproject.service;
 
+import org.binaracademy.finalproject.model.request.UpdateSubjectRequest;
 import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Subject;
 
@@ -11,7 +12,7 @@ public interface SubjectService {
 
     List<SubjectResponse> getAllSubject();
 
-    SubjectResponse updateSubject(Subject subject, String code);
+    SubjectResponse updateSubject(UpdateSubjectRequest subject, String code);
 
     void deleteSubjectByCode(String code);
 }

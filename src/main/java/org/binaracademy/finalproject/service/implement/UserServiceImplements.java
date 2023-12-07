@@ -35,7 +35,6 @@ public class UserServiceImplements implements UserService {
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
-                .linkProfilePicture(users.getLinkProfilePicture())
                 .build();
     }
 
@@ -46,27 +45,30 @@ public class UserServiceImplements implements UserService {
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
-                .linkProfilePicture(users.getLinkProfilePicture())
                 .build();
     }
 
     @Override
-    public UserResponse updateUsers(UpdateUserRequest users, String username) {
-        log.info("Process updating user");
-        Users users1 = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public UserResponse updateUsers(UpdateUserRequest updateUsers, String username) {
+        try {
+            log.info("Process updating user");
+            Users users = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        users1.setUsername(users.getUsername());
-        users1.setPassword(passwordEncoder.encode(users.getPassword()));
-        users1.setEmail(users.getEmail());
-        users1.setPhoneNumber(users.getPhoneNumber());
-        users1.setCountry(users.getCountry());
-        users1.setCity(users.getCity());
-        users1.setLinkProfilePicture(users.getLinkProfilePicture());
-        userRepository.save(users1);
-        log.info("Updating user with username: " + username + " successful!");
+            users.setUsername(updateUsers.getUsername() == null ? users.getUsername() : updateUsers.getUsername());
+            users.setPassword(passwordEncoder.encode(updateUsers.getPassword() == null ? users.getPassword() : updateUsers.getPassword()));
+            users.setEmail(updateUsers.getEmail() == null ? users.getEmail() : updateUsers.getEmail());
+            users.setPhoneNumber(updateUsers.getPhoneNumber() == null ? users.getPhoneNumber() : updateUsers.getPhoneNumber());
+            users.setCountry(updateUsers.getCountry() == null ? users.getCountry() : updateUsers.getCountry());
+            users.setCity(updateUsers.getCity() == null ? users.getCity() : updateUsers.getCity());
+            userRepository.save(users);
+            log.info("Updating user with username: " + username + " successful!");
 
-        return toUserResponse(users1);
+            return toUserResponse(users);
+        } catch (Exception e) {
+            log.error("Update user failed");
+            throw e;
+        }
     }
 
     @Override
@@ -82,6 +84,7 @@ public class UserServiceImplements implements UserService {
             log.info("Successfully deleted user!");
         } catch (Exception e){
             log.error("Deleting user failed, please try again!");
+            throw e;
         }
     }
 

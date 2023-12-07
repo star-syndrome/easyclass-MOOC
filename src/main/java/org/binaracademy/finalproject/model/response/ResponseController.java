@@ -1,4 +1,4 @@
-package org.binaracademy.finalproject.DTO;
+package org.binaracademy.finalproject.model.response;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Data
 @Builder
-public class ResponseDTO {
+public class ResponseController {
 
     public static ResponseEntity<Object> statusResponse(HttpStatus code, String message, Object data) {
         Map<String, Object> bodyResponse = new HashMap<>();

@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
 import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.response.SubjectResponse;
@@ -78,23 +79,28 @@ public class CourseServiceImplements implements CourseService {
     }
 
     @Override
-    public CourseResponse updateCourse(Course course, String code) {
-        log.info("Process updating course");
-        Course course1 = courseRepository.findByCodeCourse(code)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+    public CourseResponse updateCourse(UpdateCourseRequest updateCourse, String code) {
+        try {
+            log.info("Process updating course");
+            Course courses = courseRepository.findByCodeCourse(code)
+                    .orElseThrow(() -> new RuntimeException("Course not found"));
 
-        course1.setTitleCourse(course.getTitleCourse());
-        course1.setCodeCourse(course.getCodeCourse());
-        course1.setAboutCourse(course.getAboutCourse());
-        course1.setLevelCourse(course.getLevelCourse());
-        course1.setPriceCourse(course.getPriceCourse());
-        course1.setIsPremium(course.getIsPremium());
-        course1.setTeacher(course.getTeacher());
-        course1.setCategories(course.getCategories());
-        courseRepository.save(course1);
-        log.info("Updating course with code: " + code + " successful!");
+            courses.setTitleCourse(updateCourse.getTitle() == null ? courses.getTitleCourse() : updateCourse.getTitle());
+            courses.setCodeCourse(updateCourse.getCode() == null ? courses.getCodeCourse() : updateCourse.getCode());
+            courses.setAboutCourse(updateCourse.getAbout() == null ? courses.getAboutCourse() : updateCourse.getAbout());
+            courses.setLevelCourse(updateCourse.getLevel() == null ? courses.getLevelCourse() : updateCourse.getLevel());
+            courses.setPriceCourse(updateCourse.getPrice() == null ? courses.getPriceCourse() : updateCourse.getPrice());
+            courses.setIsPremium(updateCourse.getIsPremium() == null ? courses.getIsPremium() : updateCourse.getIsPremium());
+            courses.setTeacher(updateCourse.getTeacher() == null ? courses.getTeacher() : updateCourse.getTeacher());
+            courses.setCategories(updateCourse.getCategories() == null ? courses.getCategories() : updateCourse.getCategories());
+            courseRepository.save(courses);
+            log.info("Updating course with code: " + code + " successful!");
 
-        return toCourseResponse(course1);
+            return toCourseResponse(courses);
+        } catch (Exception e) {
+            log.error("Update course failed");
+            throw e;
+        }
     }
 
     @Override
@@ -108,8 +114,8 @@ public class CourseServiceImplements implements CourseService {
             assert course != null;
             course.getCategories().clear();
             course.getSubjects().clear();
-            courseRepository.deleteByCode(codeCourse);
             log.info("Deleting the course with course code: {} successful!", codeCourse);
+            courseRepository.deleteByCode(codeCourse);
         } catch (Exception e) {
             log.error("Deleting course failed, please try again!");
             throw e;

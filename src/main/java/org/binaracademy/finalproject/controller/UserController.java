@@ -1,6 +1,6 @@
 package org.binaracademy.finalproject.controller;
 
-import org.binaracademy.finalproject.DTO.ResponseDTO;
+import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ public class UserController {
     @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getAllCourse(){
         try {
-            return ResponseDTO.statusResponse(HttpStatus.OK,
+            return ResponseController.statusResponse(HttpStatus.OK,
                     "Success get all user",
                     userService.getAllUser());
         } catch (Exception e) {
-            return ResponseDTO.internalServerError(e.getMessage());
+            return ResponseController.internalServerError(e.getMessage());
         }
     }
 
@@ -35,11 +35,13 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateUser(@PathVariable String username, @Valid @RequestBody UpdateUserRequest users) {
         try {
-            return ResponseDTO.statusResponse(HttpStatus.OK,
-                    "Update user successful!",
-                    userService.updateUsers(users, username));
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Update user successful!", userService.updateUsers(users, username));
+        } catch (RuntimeException runtimeException) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    runtimeException.getMessage(), null);
         } catch (Exception e) {
-            return ResponseDTO.internalServerError(e.getMessage());
+            return ResponseController.internalServerError(e.getMessage());
         }
     }
 
@@ -47,11 +49,13 @@ public class UserController {
     public ResponseEntity<Object> deleteCourse(@PathVariable String username){
         try {
             userService.deleteUsersByUsername(username);
-            return ResponseDTO.statusResponse(HttpStatus.OK,
-                    "Deleting user successful!",
-                    null);
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Deleting user successful!", null);
+        } catch (RuntimeException runtimeException) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    runtimeException.getMessage(), null);
         } catch (Exception e) {
-            return ResponseDTO.internalServerError(e.getMessage());
+            return ResponseController.internalServerError(e.getMessage());
         }
     }
 }

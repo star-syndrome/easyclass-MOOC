@@ -1,5 +1,6 @@
 package org.binaracademy.finalproject.service.implement;
 
+import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.model.Roles;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.RoleRepository;
@@ -27,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class AuthServiceImplements implements AuthService {
 
     @Autowired
@@ -55,6 +57,7 @@ public class AuthServiceImplements implements AuthService {
 
     @Override
     public MessageResponse registerUser(SignupRequest signupRequest) {
+        log.info("Processing register user");
         Boolean usernameExist = usersRepository.existsByUsername(signupRequest.getUsername());
         if(Boolean.TRUE.equals(usernameExist)) {
             return MessageResponse.builder()
@@ -71,7 +74,7 @@ public class AuthServiceImplements implements AuthService {
 
         Users users = new Users(signupRequest.getUsername(), signupRequest.getEmail(),
                 passwordEncoder.encode(signupRequest.getPassword()), signupRequest.getPhoneNumber(),
-                signupRequest.getCountry(), signupRequest.getCity(), signupRequest.getLinkProfilePicture());
+                signupRequest.getCountry(), signupRequest.getCity());
 
         Set<String> strRoles = signupRequest.getRole();
         Set<Roles> roles = new HashSet<>();
@@ -89,6 +92,7 @@ public class AuthServiceImplements implements AuthService {
         }
         users.setRoles(roles);
         usersRepository.save(users);
+        log.info("User registered successfully, username: {}", users.getUsername());
         return MessageResponse.builder()
                 .message("User registered successfully, username: " + users.getUsername())
                 .build();
@@ -96,6 +100,7 @@ public class AuthServiceImplements implements AuthService {
 
     @Override
     public JwtResponse authenticateUser(LoginRequest login) {
+        log.info("Processing sign in user");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword())
         );
@@ -107,7 +112,7 @@ public class AuthServiceImplements implements AuthService {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-
+        log.info("User: " + userDetails.getUsername() + " successfully sign in");
         return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles);
     }
 }

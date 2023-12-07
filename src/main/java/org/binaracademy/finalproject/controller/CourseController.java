@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.controller;
 
-import org.binaracademy.finalproject.DTO.ResponseDTO;
+import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
+import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.service.CourseService;
@@ -10,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Objects;
 
 @CrossOrigin("*")
@@ -24,24 +24,24 @@ public class CourseController {
     @PostMapping(value = "/add",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> addCourse(@Valid @RequestBody Course course){
+    public ResponseEntity<Object> addCourse(@RequestBody Course course){
        try {
-           return ResponseDTO.statusResponse(HttpStatus.OK,
+           return ResponseController.statusResponse(HttpStatus.OK,
                    "Adding new course successful!",
                    courseService.addNewCourse(course));
        } catch (Exception e) {
-           return ResponseDTO.internalServerError(e.getMessage());
+           return ResponseController.internalServerError(e.getMessage());
        }
     }
 
     @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getAllCourse(){
         try {
-            return ResponseDTO.statusResponse(HttpStatus.OK,
+            return ResponseController.statusResponse(HttpStatus.OK,
                     "Success get all course",
                     courseService.getAllCourse());
         } catch (Exception e) {
-            return ResponseDTO.internalServerError(e.getMessage());
+            return ResponseController.internalServerError(e.getMessage());
         }
     }
 
@@ -49,24 +49,29 @@ public class CourseController {
     public ResponseEntity<Object> deleteCourse(@PathVariable String codeCourse){
         try {
             courseService.deleteCourseByCode(codeCourse);
-            return ResponseDTO.statusResponse(HttpStatus.OK,
-                    "Deleting course successful!",
-                    null);
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Deleting course successful!", null);
+        } catch (RuntimeException runtimeException) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    runtimeException.getMessage(), null);
         } catch (Exception e) {
-            return ResponseDTO.internalServerError(e.getMessage());
+            return ResponseController.internalServerError(e.getMessage());
         }
     }
 
     @PutMapping(value = "/update/{code}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateCourse(@PathVariable String code, @RequestBody Course course){
+    public ResponseEntity<Object> updateCourse(@PathVariable String code, @RequestBody UpdateCourseRequest course){
         try {
-            return ResponseDTO.statusResponse(HttpStatus.OK,
+            return ResponseController.statusResponse(HttpStatus.OK,
                     "Update course successful!",
                     courseService.updateCourse(course, code));
+        } catch (RuntimeException runtimeException) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    runtimeException.getMessage(), null);
         } catch (Exception e) {
-            return ResponseDTO.internalServerError(e.getMessage());
+            return ResponseController.internalServerError(e.getMessage());
         }
     }
 
@@ -75,15 +80,14 @@ public class CourseController {
         CourseDTO courseDTO = courseService.courseDetails(title);
         try {
             if (Objects.nonNull(courseDTO)) {
-                return ResponseDTO.statusResponse(HttpStatus.OK,
+                return ResponseController.statusResponse(HttpStatus.OK,
                         "Success getting all information about course " + title,
                         courseService.courseDetails(title));
             }
-            return ResponseDTO.statusResponse(HttpStatus.NOT_FOUND,
-                    "Course not found!",
-                    null);
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
         } catch (Exception e) {
-            return ResponseDTO.internalServerError(e.getMessage());
+            return ResponseController.internalServerError(e.getMessage());
         }
     }
 }

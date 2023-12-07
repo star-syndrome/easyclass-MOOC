@@ -14,6 +14,8 @@ public interface SubjectRepository extends JpaRepository<Subject, String> {
 
     Optional<Subject> findByCode(String code);
 
+    Boolean existsByCode(String code);
+
     @Modifying
     @Query(nativeQuery = true, value = "delete from subject where code = :code")
     void deleteSubjectByCode(@Param("code") String code);

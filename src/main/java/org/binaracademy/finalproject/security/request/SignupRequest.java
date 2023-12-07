@@ -24,7 +24,7 @@ public class SignupRequest {
     @Email
     private String email;
 
-    private Set<String> role;
+    private Set<String> role; // Ilangin kalo mau auto role user ketika register account
 
     @NotBlank
     @Size(min = 6, max = 20)
@@ -39,6 +39,4 @@ public class SignupRequest {
 
     @Size(max = 50)
     public String city;
-
-    private String linkProfilePicture;
 }

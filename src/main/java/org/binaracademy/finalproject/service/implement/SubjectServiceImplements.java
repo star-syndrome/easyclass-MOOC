@@ -1,15 +1,14 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.request.UpdateSubjectRequest;
 import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Subject;
 import org.binaracademy.finalproject.repository.SubjectRepository;
 import org.binaracademy.finalproject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,33 +61,38 @@ public class SubjectServiceImplements implements SubjectService {
     }
 
     @Override
-    public SubjectResponse updateSubject(Subject subject, String code) {
-        log.info("Process updating subject");
-         Subject subject1 = subjectRepository.findByCode(code)
-                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found"));
+    public SubjectResponse updateSubject(UpdateSubjectRequest updateSubject, String code) {
+        try {
+            log.info("Process updating subject");
+            Subject subjects = subjectRepository.findByCode(code)
+                    .orElseThrow(() -> new RuntimeException("Subject not found"));
 
-         subject1.setTitle(subject.getTitle());
-         subject1.setCode(subject.getCode());
-         subject1.setDescription(subject.getDescription());
-         subject1.setLinkVideo(subject.getLinkVideo());
-         subject1.setIsPremium(subject.getIsPremium());
-         subjectRepository.save(subject1);
-         log.info("Updating subject with code: " + code + " successfully!");
+            subjects.setTitle(updateSubject.getTitle() == null ? subjects.getTitle() : updateSubject.getTitle());
+            subjects.setCode(updateSubject.getCode() == null ? subjects.getCode() : updateSubject.getCode());
+            subjects.setDescription(updateSubject.getDescription() == null ? subjects.getDescription() : updateSubject.getDescription());
+            subjects.setLinkVideo(updateSubject.getLinkVideo() == null ? subjects.getLinkVideo() : updateSubject.getLinkVideo());
+            subjects.setIsPremium(updateSubject.getIsPremium() == null ? subjects.getIsPremium() : updateSubject.getIsPremium());
+            subjectRepository.save(subjects);
+            log.info("Updating subject with code: " + code + " successfully!");
 
-         return toSubjectResponse(subject1);
+            return toSubjectResponse(subjects);
+        } catch (Exception e) {
+            log.error("Update Subject Failed");
+            throw e;
+        }
     }
 
     @Override
     public void deleteSubjectByCode(String code) {
         try {
-            Subject subject = subjectRepository.findByCode(code).orElse(null);
-            if (!Optional.ofNullable(subject).isPresent()){
-                log.info("Subject is not available");
+            if (!subjectRepository.existsByCode(code)) {
+                throw new RuntimeException("Subject not found");
             }
-            subjectRepository.deleteSubjectByCode(code);
             log.info("Deleted subject where subject code: " + code + " successfully!");
+            subjectRepository.deleteSubjectByCode(code);
         } catch (Exception e) {
             log.error("Deleting subject failed, please try again!");
+            throw e;
         }
     }
 }
