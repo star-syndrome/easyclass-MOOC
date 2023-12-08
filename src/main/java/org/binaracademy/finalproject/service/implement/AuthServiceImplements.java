@@ -1,8 +1,10 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.OneTimePassword;
 import org.binaracademy.finalproject.model.Roles;
 import org.binaracademy.finalproject.model.Users;
+import org.binaracademy.finalproject.model.request.EmailRequest;
 import org.binaracademy.finalproject.repository.RoleRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.security.UserDetailsImpl;
@@ -12,7 +14,9 @@ import org.binaracademy.finalproject.security.request.LoginRequest;
 import org.binaracademy.finalproject.security.request.SignupRequest;
 import org.binaracademy.finalproject.security.response.JwtResponse;
 import org.binaracademy.finalproject.security.response.MessageResponse;
+//import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.AuthService;
+import org.binaracademy.finalproject.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,6 +50,12 @@ public class AuthServiceImplements implements AuthService {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
+    OTPServiceImplements otpServiceImplements;
+
+    @Autowired
+    EmailService emailService;
+
     public AuthServiceImplements(AuthenticationManager authenticationManager, UserRepository usersRepository,
                                  JwtUtils jwtUtils, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
@@ -57,7 +67,6 @@ public class AuthServiceImplements implements AuthService {
 
     @Override
     public MessageResponse registerUser(SignupRequest signupRequest) {
-        log.info("Processing register user");
         Boolean usernameExist = usersRepository.existsByUsername(signupRequest.getUsername());
         if(Boolean.TRUE.equals(usernameExist)) {
             return MessageResponse.builder()
@@ -92,6 +101,14 @@ public class AuthServiceImplements implements AuthService {
         }
         users.setRoles(roles);
         usersRepository.save(users);
+
+        OneTimePassword oneTimePassword = otpServiceImplements.createOTP(users.getUsername());
+        emailService.sendEmail(EmailRequest.builder()
+                        .subject("One Time Password")
+                        .recipient(users.getEmail())
+                        .content(oneTimePassword.getOtp())
+                .build());
+
         log.info("User registered successfully, username: {}", users.getUsername());
         return MessageResponse.builder()
                 .message("User registered successfully, username: " + users.getUsername())
@@ -100,7 +117,6 @@ public class AuthServiceImplements implements AuthService {
 
     @Override
     public JwtResponse authenticateUser(LoginRequest login) {
-        log.info("Processing sign in user");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword())
         );

@@ -1,4 +1,4 @@
-package org.binaracademy.finalproject.service.implement;
+package org.binaracademy.finalproject.security.service;
 
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.UserRepository;
