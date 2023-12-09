@@ -6,6 +6,7 @@ import org.binaracademy.finalproject.model.response.UserResponse;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.UserRepository;
+import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,10 +23,13 @@ import java.util.stream.Collectors;
 public class UserServiceImplements implements UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private OTPService otpService;
 
     private UserResponse toUserResponse(Users users) {
         return UserResponse.builder()
@@ -78,6 +82,7 @@ public class UserServiceImplements implements UserService {
             if (!Optional.ofNullable(users).isPresent()){
                 log.info("User is not available");
             }
+            otpService.deleteByUsername(username);
             assert users != null;
             users.getRoles().clear();
             userRepository.deleteUserFromUsername(username);

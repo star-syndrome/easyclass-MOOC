@@ -35,8 +35,8 @@ public class SignupRequest {
     private String phoneNumber;
 
     @Size(max = 50)
-    public String country;
+    private String country;
 
     @Size(max = 50)
-    public String city;
+    private String city;
 }

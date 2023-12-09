@@ -24,10 +24,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    AuthEntryPointJwt unauthorizedHandler;
+    private AuthEntryPointJwt unauthorizedHandler;
 
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -39,10 +39,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/**", "/api/auth/**", "/api/user/get","/api/course/get", "/api/subject/get", "/api/course/detail",
-                        "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
-                .antMatchers("/api/course/add","/api/course/update/**", "/api/course/delete/**",
-                        "/api/subject/add", "/api/subject/update/**", "/api/subject/delete/**").hasAuthority(ERole.ROLE_ADMIN.name())
+                .antMatchers("/**", "/api/auth/**", "/api/user/get","/api/course/get", "/api/subject/get",
+                        "/api/course/detail", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
+                .antMatchers("/api/admin/**").hasAuthority(ERole.ROLE_ADMIN.name())
                 .antMatchers("/api/user/update/**", "/api/user/delete/**").hasAuthority(ERole.ROLE_USER.name())
                 .anyRequest()
                 .authenticated();

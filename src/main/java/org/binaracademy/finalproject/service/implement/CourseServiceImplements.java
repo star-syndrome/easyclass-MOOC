@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class CourseServiceImplements implements CourseService {
 
     @Autowired
-    CourseRepository courseRepository;
+    private CourseRepository courseRepository;
 
     private CourseResponse toCourseResponse(Course course) {
         return CourseResponse.builder()

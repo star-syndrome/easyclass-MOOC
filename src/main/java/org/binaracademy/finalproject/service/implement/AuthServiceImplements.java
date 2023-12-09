@@ -5,6 +5,7 @@ import org.binaracademy.finalproject.model.OneTimePassword;
 import org.binaracademy.finalproject.model.Roles;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.EmailRequest;
+import org.binaracademy.finalproject.model.request.OTPRequest;
 import org.binaracademy.finalproject.repository.RoleRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.security.UserDetailsImpl;
@@ -14,9 +15,9 @@ import org.binaracademy.finalproject.security.request.LoginRequest;
 import org.binaracademy.finalproject.security.request.SignupRequest;
 import org.binaracademy.finalproject.security.response.JwtResponse;
 import org.binaracademy.finalproject.security.response.MessageResponse;
-//import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.AuthService;
 import org.binaracademy.finalproject.service.EmailService;
+import org.binaracademy.finalproject.service.OTPService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,25 +37,25 @@ import java.util.stream.Collectors;
 public class AuthServiceImplements implements AuthService {
 
     @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository usersRepository;
+    private UserRepository usersRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    JwtUtils jwtUtils;
+    private JwtUtils jwtUtils;
 
     @Autowired
-    OTPServiceImplements otpServiceImplements;
+    private OTPService otpService;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     public AuthServiceImplements(AuthenticationManager authenticationManager, UserRepository usersRepository,
                                  JwtUtils jwtUtils, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
@@ -102,7 +103,7 @@ public class AuthServiceImplements implements AuthService {
         users.setRoles(roles);
         usersRepository.save(users);
 
-        OneTimePassword oneTimePassword = otpServiceImplements.createOTP(users.getUsername());
+        OneTimePassword oneTimePassword = otpService.createOTP(users.getUsername());
         emailService.sendEmail(EmailRequest.builder()
                         .subject("One Time Password")
                         .recipient(users.getEmail())
@@ -130,5 +131,18 @@ public class AuthServiceImplements implements AuthService {
                 .collect(Collectors.toList());
         log.info("User: " + userDetails.getUsername() + " successfully sign in");
         return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles);
+    }
+
+    @Override
+    public MessageResponse otpVerify(OTPRequest otpRequest) {
+        String oneTimePassword = otpRequest.getOtp();
+        otpService.findByOtp(oneTimePassword)
+                .map(otpService::verifyExpiration)
+                .map(OneTimePassword::getUsers)
+                .map(users -> "Your account is verify!")
+                .orElseThrow(() -> new RuntimeException("OTP different! Please check your OTP correctly"));
+        return MessageResponse.builder()
+                .message("Successfully verify OTP! Please sign in to access easyclass!")
+                .build();
     }
 }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class SubjectServiceImplements implements SubjectService {
 
     @Autowired
-    SubjectRepository subjectRepository;
+    private SubjectRepository subjectRepository;
 
     private SubjectResponse toSubjectResponse(Subject subject) {
         return SubjectResponse.builder()

@@ -23,8 +23,8 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")})
 public class Users {
 
-    public Users(String username, String email, String password,
-                 String phoneNumber, String country, String city) {
+    public Users(String username, String email, String password, String phoneNumber,
+                 String country, String city) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -56,11 +56,11 @@ public class Users {
 
     @NotBlank
     @Size(max = 50)
-    public String country;
+    private String country;
 
     @NotBlank
     @Size(max = 50)
-    public String city;
+    private String city;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

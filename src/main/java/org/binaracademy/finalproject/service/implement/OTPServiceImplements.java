@@ -46,7 +46,7 @@ public class OTPServiceImplements implements OTPService {
     public OneTimePassword verifyExpiration(OneTimePassword otp) {
         if (otp.getExpiryDate().compareTo(Instant.now()) < 0) {
             oneTimePasswordRepository.delete(otp);
-            throw new RuntimeException("OTP was expired. please make a new sign in request");
+            throw new RuntimeException("OTP was expired");
         }
         return otp;
     }

@@ -24,6 +24,6 @@ public class UpdateUserRequest {
     private String password;
 
     private String phoneNumber;
-    public String country;
-    public String city;
+    private String country;
+    private String city;
 }
