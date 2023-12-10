@@ -7,11 +7,14 @@ import org.binaracademy.finalproject.model.request.UpdateSubjectRequest;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.service.CourseService;
 import org.binaracademy.finalproject.service.SubjectService;
+import org.binaracademy.finalproject.service.implement.CategoryAndRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -23,6 +26,9 @@ public class AdminController {
 
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private CategoryAndRoleService service;
 
     @PostMapping(value = "/course/add",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -104,6 +110,28 @@ public class AdminController {
         } catch (RuntimeException runtimeException) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     runtimeException.getMessage(), null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/category/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getCategory() {
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success get all category",
+                    service.getCategory());
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/role/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getRoles() {
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success get all roles",
+                    service.getRoles());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
