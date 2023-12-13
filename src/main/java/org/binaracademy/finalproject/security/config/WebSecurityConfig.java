@@ -35,14 +35,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.cors().disable().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("/**", "/api/auth/**", "/api/user/get","/api/course/get", "/api/subject/get",
                         "/api/course/detail", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
                 .antMatchers("/api/admin/**").hasAuthority(ERole.ROLE_ADMIN.name())
-                .antMatchers("/api/user/update/**", "/api/user/delete/**").hasAuthority(ERole.ROLE_USER.name())
+                .antMatchers("/api/user/update/**", "/api/user/delete/**", "/api/user/upload").hasAuthority(ERole.ROLE_USER.name())
                 .anyRequest()
                 .authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

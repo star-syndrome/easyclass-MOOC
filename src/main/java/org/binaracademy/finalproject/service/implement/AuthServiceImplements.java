@@ -71,7 +71,7 @@ public class AuthServiceImplements implements AuthService {
         Boolean usernameExist = usersRepository.existsByUsername(signupRequest.getUsername());
         if(Boolean.TRUE.equals(usernameExist)) {
             return MessageResponse.builder()
-                    .message( "Error: Username is already taken!")
+                    .message("Error: Username is already taken!")
                     .build();
         }
 
