@@ -8,9 +8,11 @@ import java.util.List;
 
 public interface UserService {
 
-    UserResponse updateUsers(UpdateUserRequest users, String username);
+    UserResponse updateUsers(UpdateUserRequest updateUsers);
 
     void deleteUsersByUsername(String username);
 
     List<GetUserResponse> getAllUser();
+
+    UserResponse getUser();
 }

@@ -22,4 +22,6 @@ public class UpdateCourseRequest {
     private Double price;
     private Boolean isPremium;
     private Set<Category> categories;
+    private String module;
+    private String duration;
 }

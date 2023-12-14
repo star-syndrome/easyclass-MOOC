@@ -9,6 +9,8 @@ import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +28,6 @@ public class UserServiceImplements implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private OTPService otpService;
 
     private UserResponse toUserResponse(Users users) {
@@ -44,6 +43,8 @@ public class UserServiceImplements implements UserService {
 
     private GetUserResponse getUserResponse(Users users) {
         return GetUserResponse.builder()
+                .id(users.getId())
+                .password(users.getPassword())
                 .username(users.getUsername())
                 .email(users.getEmail())
                 .phoneNumber(users.getPhoneNumber())
@@ -53,22 +54,19 @@ public class UserServiceImplements implements UserService {
     }
 
     @Override
-    public UserResponse updateUsers(UpdateUserRequest updateUsers, String username) {
+    public UserResponse updateUsers(UpdateUserRequest updateUsers) {
         try {
             log.info("Process updating user");
-            Users users = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            users.setUsername(updateUsers.getUsername() == null ? users.getUsername() : updateUsers.getUsername());
-            users.setPassword(passwordEncoder.encode(updateUsers.getPassword() == null ? users.getPassword() : updateUsers.getPassword()));
-            users.setEmail(updateUsers.getEmail() == null ? users.getEmail() : updateUsers.getEmail());
-            users.setPhoneNumber(updateUsers.getPhoneNumber() == null ? users.getPhoneNumber() : updateUsers.getPhoneNumber());
-            users.setCountry(updateUsers.getCountry() == null ? users.getCountry() : updateUsers.getCountry());
-            users.setCity(updateUsers.getCity() == null ? users.getCity() : updateUsers.getCity());
-            userRepository.save(users);
-            log.info("Updating user with username: " + username + " successful!");
-
-            return toUserResponse(users);
+            String username = getAuth();
+            Optional<Users> users = Optional.ofNullable(userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found")));
+            Users users1 = users.get();
+            users1.setPhoneNumber(updateUsers.getPhoneNumber() == null ? users1.getPhoneNumber() : updateUsers.getPhoneNumber());
+            users1.setCountry(updateUsers.getCountry() == null ? users1.getCountry() : updateUsers.getCountry());
+            users1.setCity(updateUsers.getCity() == null ? users1.getCity() : updateUsers.getCity());
+            userRepository.save(users1);
+            log.info("Updating user successful!");
+            return toUserResponse(users1);
         } catch (Exception e) {
             log.error("Update user failed");
             throw e;
@@ -100,5 +98,30 @@ public class UserServiceImplements implements UserService {
         return userRepository.findAll().stream()
                 .map(this::getUserResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponse getUser() {
+        log.info("Getting information details from user!");
+        String username = getAuth();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users users1 = users.get();
+
+        UserResponse userResponse = new UserResponse();
+        userResponse.setUsername(users1.getUsername());
+        userResponse.setEmail(users1.getEmail());
+        userResponse.setPassword(users1.getPassword());
+        userResponse.setPhoneNumber(users1.getPhoneNumber());
+        userResponse.setCountry(users1.getCountry());
+        userResponse.setCity(users1.getCity());
+
+        return userResponse;
+    }
+
+    private String getAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return username;
     }
 }

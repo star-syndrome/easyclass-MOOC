@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
 import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.DTO.CourseDTO;
+import org.binaracademy.finalproject.model.response.GetAllCourseAdminResponse;
 import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.response.AddCourseResponse;
@@ -34,6 +35,8 @@ public class CourseServiceImplements implements CourseService {
                 .price(course.getPriceCourse())
                 .isPremium(course.getIsPremium())
                 .teacher(course.getTeacher())
+                .module(course.getModule())
+                .duration(course.getDuration())
                 .build();
     }
 
@@ -47,6 +50,8 @@ public class CourseServiceImplements implements CourseService {
                 .price(course.getPriceCourse())
                 .isPremium(course.getIsPremium())
                 .teacher(course.getTeacher())
+                .module(course.getModule())
+                .duration(course.getDuration())
                 .build();
     }
 
@@ -137,6 +142,8 @@ public class CourseServiceImplements implements CourseService {
                                 .level(courses.getLevelCourse())
                                 .isPremium(courses.getIsPremium())
                                 .categories(courses.getCategories())
+                                .module(courses.getModule())
+                                .duration(courses.getDuration())
                                 .build())
                         .subjectResponse(courses.getSubjects().stream()
                                 .map(subject -> {
@@ -151,5 +158,26 @@ public class CourseServiceImplements implements CourseService {
                                 .collect(Collectors.toList()))
                         .build())
                 .orElse(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetAllCourseAdminResponse> getAllCourseAdmin() {
+        log.info("Getting all of list courses!");
+        return courseRepository.findAll().stream()
+                .map(course -> GetAllCourseAdminResponse.builder()
+                        .id(course.getId())
+                        .code(course.getCodeCourse())
+                        .title(course.getTitleCourse())
+                        .about(course.getAboutCourse())
+                        .level(course.getLevelCourse())
+                        .price(course.getPriceCourse())
+                        .teacher(course.getTeacher())
+                        .categorySet(course.getCategories())
+                        .isPremium(course.getIsPremium())
+                        .module(course.getModule())
+                        .duration(course.getDuration())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

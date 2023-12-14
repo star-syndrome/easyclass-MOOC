@@ -10,17 +10,19 @@ import java.util.Set;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CourseResponse {
+@AllArgsConstructor
+public class GetAllCourseAdminResponse {
 
-    private String title;
+    private String id;
     private String code;
     private Double price;
-    private String level;
+    private String title;
     private String teacher;
+    private String level;
     private Boolean isPremium;
-    private Set<Category> categories;
+    private String about;
+    private Set<Category> categorySet;
     private String module;
     private String duration;
 }

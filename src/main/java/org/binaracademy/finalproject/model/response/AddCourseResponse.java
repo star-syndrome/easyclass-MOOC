@@ -22,4 +22,6 @@ public class AddCourseResponse {
     private String teacher;
     private Boolean isPremium;
     private Set<Category> categories;
+    private String module;
+    private String duration;
 }

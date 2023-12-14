@@ -1,5 +1,6 @@
 package org.binaracademy.finalproject.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.Subject;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
@@ -7,6 +8,7 @@ import org.binaracademy.finalproject.model.request.UpdateSubjectRequest;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.service.CourseService;
 import org.binaracademy.finalproject.service.SubjectService;
+import org.binaracademy.finalproject.service.UserService;
 import org.binaracademy.finalproject.service.implement.CategoryAndRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,9 @@ public class AdminController {
 
     @Autowired
     private CategoryAndRoleService service;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping(value = "/course/add",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -131,6 +136,29 @@ public class AdminController {
             return ResponseController.statusResponse(HttpStatus.OK,
                     "Success get all roles",
                     service.getRoles());
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/user/getAllUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getAllCourse(){
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success get all users",
+                    userService.getAllUser());
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/course/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get course yang ada ID-nya")
+    public ResponseEntity<Object> getCourseAdmin() {
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success get all roles",
+                    courseService.getAllCourseAdmin());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }

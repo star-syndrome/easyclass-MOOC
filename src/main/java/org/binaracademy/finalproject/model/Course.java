@@ -38,6 +38,10 @@ public class Course {
 
     private Boolean isPremium;
 
+    private String module;
+
+    private String duration;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "course_category",
             joinColumns = @JoinColumn(name = "course_id"),
