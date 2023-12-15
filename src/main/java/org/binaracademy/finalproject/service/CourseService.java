@@ -19,7 +19,11 @@ public interface CourseService {
 
     void deleteCourseByCode(String codeCourse);
 
-    CourseDTO courseDetails(String titleCourse);
+    CourseDTO courseDetailsFromTitle(String titleCourse);
 
     List<GetAllCourseAdminResponse> getAllCourseAdmin();
+
+    CourseDTO courseDetailFromCode(String code);
+
+    CourseResponse getCourse(String code);
 }

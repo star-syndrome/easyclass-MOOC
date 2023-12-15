@@ -14,8 +14,6 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     Optional<Course> findByCodeCourse(String codeCourse);
 
-    Boolean existsByCodeCourse(String codeCourse);
-
     Course findByTitleCourse(String titleCourse);
 
     @Modifying

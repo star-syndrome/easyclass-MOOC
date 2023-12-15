@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +26,7 @@ public class Course {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
+    @Size(max = 1000)
     private String aboutCourse;
 
     private String titleCourse;
@@ -51,4 +54,7 @@ public class Course {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private List<Subject> subjects;
+
+    @OneToMany(mappedBy = "course")
+    private List<Order> orders;
 }

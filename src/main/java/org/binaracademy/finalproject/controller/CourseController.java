@@ -1,5 +1,6 @@
 package org.binaracademy.finalproject.controller;
 
+import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.service.CourseService;
@@ -19,7 +20,7 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getAllCourse(){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
@@ -30,14 +31,46 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/details", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> detailsCourse(@RequestParam String title) {
-        CourseDTO courseDTO = courseService.courseDetails(title);
+    @GetMapping(value = "/detailsFromTitle", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> courseDetailFromTitle(@RequestParam String title) {
+        CourseDTO courseDTO = courseService.courseDetailsFromTitle(title);
         try {
             if (Objects.nonNull(courseDTO)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
                         "Success getting all information about course " + title,
-                        courseService.courseDetails(title));
+                        courseService.courseDetailsFromTitle(title));
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/detailsFromCode", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> courseDetailFromCode(@RequestParam String code) {
+        CourseDTO courseDTO = courseService.courseDetailFromCode(code);
+        try {
+            if (Objects.nonNull(courseDTO)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Success getting all information about course " + code,
+                        courseService.courseDetailFromCode(code));
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getCourse(@RequestParam String code) {
+        CourseResponse courseResponse = courseService.getCourse(code);
+        try {
+            if (Objects.nonNull(courseResponse)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Success get course " + code,
+                        courseService.getCourse(code));
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);
