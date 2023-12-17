@@ -1,9 +1,12 @@
 package org.binaracademy.finalproject.model.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @Builder
@@ -11,10 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderResponse {
 
-    private String title;
-    private String category;
-    private String teacher;
-    private Double price;
-    private Double ppn;
-    private Double totalPrice;
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date time;
+
+    private String paymentMethod;
+    private String courseId;
+    private Boolean completed;
 }

@@ -23,7 +23,5 @@ public interface CourseService {
 
     List<GetAllCourseAdminResponse> getAllCourseAdmin();
 
-    CourseDTO courseDetailFromCode(String code);
-
     CourseResponse getCourse(String code);
 }

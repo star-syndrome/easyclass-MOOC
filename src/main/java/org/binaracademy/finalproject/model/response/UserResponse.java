@@ -18,4 +18,5 @@ public class UserResponse {
     private String phoneNumber;
     private String country;
     private String city;
+    private String linkPhoto;
 }

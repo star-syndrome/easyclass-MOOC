@@ -70,8 +70,7 @@ public class UserController {
 
     @PostMapping(value = "/upload")
     public ResponseEntity<MessageResponse> uploadImage(@ModelAttribute UploadImageRequest uploadImageRequest) {
-        log.info("uploader name : {}", uploadImageRequest.getUploaderName());
-        log.info("file name : {}", uploadImageRequest.getFileName());
+        log.info("Trying to upload profile picture!");
         return Optional.of(uploadImageRequest)
                 .map(UploadImageRequest::getMultipartFile)
                 .filter(file -> !file.isEmpty())

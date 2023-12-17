@@ -131,7 +131,7 @@ public class CourseServiceImplements implements CourseService {
     @Transactional(readOnly = true)
     public CourseDTO courseDetailsFromTitle(String titleCourse) {
         log.info("Getting course detail information from course " + titleCourse);
-        return Optional.ofNullable(courseRepository.findByTitleCourse(titleCourse))
+        return courseRepository.findByTitleCourse(titleCourse)
                 .map(courses -> CourseDTO.builder()
                         .addCourseResponse(AddCourseResponse.builder()
                                 .about(courses.getAboutCourse())
@@ -183,40 +183,8 @@ public class CourseServiceImplements implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public CourseDTO courseDetailFromCode(String code) {
-        return courseRepository.findByCodeCourse(code)
-                .map(course -> CourseDTO.builder()
-                        .addCourseResponse(AddCourseResponse.builder()
-                                .about(course.getAboutCourse())
-                                .title(course.getTitleCourse())
-                                .code(course.getCodeCourse())
-                                .level(course.getLevelCourse())
-                                .teacher(course.getTeacher())
-                                .price(course.getPriceCourse())
-                                .isPremium(course.getIsPremium())
-                                .categories(course.getCategories())
-                                .module(course.getModule())
-                                .duration(course.getDuration())
-                                .build())
-                        .subjectResponse(course.getSubjects().stream()
-                                .map(subject -> {
-                                    SubjectResponse subjectResponse = new SubjectResponse();
-                                    subjectResponse.setCode(subject.getCode());
-                                    subjectResponse.setDescription(subject.getDescription());
-                                    subjectResponse.setTitle(subject.getTitle());
-                                    subjectResponse.setLink(subject.getLinkVideo());
-                                    subjectResponse.setIsPremium(subject.getIsPremium());
-                                    return subjectResponse;
-                                })
-                                .collect(Collectors.toList()))
-                        .build())
-                .orElse(null);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public CourseResponse getCourse(String code) {
-        log.info("Success getting course details where course code: {}", code);
+        log.info("Success getting course where course code: {}", code);
         return courseRepository.findByCodeCourse(code)
                 .map(course -> CourseResponse.builder()
                         .title(course.getTitleCourse())

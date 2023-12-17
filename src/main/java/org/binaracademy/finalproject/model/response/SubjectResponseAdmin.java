@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class SubjectResponse {
+@AllArgsConstructor
+public class SubjectResponseAdmin {
 
+    private String id;
     private String title;
     private String code;
     private String link;

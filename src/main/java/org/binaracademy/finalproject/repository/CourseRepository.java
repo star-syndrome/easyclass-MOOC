@@ -14,7 +14,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     Optional<Course> findByCodeCourse(String codeCourse);
 
-    Course findByTitleCourse(String titleCourse);
+    Optional<Course> findByTitleCourse(String titleCourse);
 
     @Modifying
     @Query(nativeQuery = true, value = "delete from course where code_course = :codeCourse")

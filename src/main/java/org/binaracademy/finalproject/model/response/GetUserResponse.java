@@ -19,4 +19,5 @@ public class GetUserResponse {
     private String phoneNumber;
     private String country;
     private String city;
+    private String linkPhoto;
 }

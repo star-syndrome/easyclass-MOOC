@@ -38,6 +38,7 @@ public class UserServiceImplements implements UserService {
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
+                .linkPhoto(users.getLinkPhoto())
                 .build();
     }
 
@@ -50,6 +51,7 @@ public class UserServiceImplements implements UserService {
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
+                .linkPhoto(users.getLinkPhoto())
                 .build();
     }
 
@@ -115,6 +117,7 @@ public class UserServiceImplements implements UserService {
         userResponse.setPhoneNumber(users1.getPhoneNumber());
         userResponse.setCountry(users1.getCountry());
         userResponse.setCity(users1.getCity());
+        userResponse.setLinkPhoto(users1.getLinkPhoto());
 
         return userResponse;
     }

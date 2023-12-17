@@ -51,17 +51,16 @@ public class Users {
     @Size(max = 120)
     private String password;
 
-    @NotBlank
     @Size(max = 15)
     private String phoneNumber;
 
-    @NotBlank
     @Size(max = 50)
     private String country;
 
-    @NotBlank
     @Size(max = 50)
     private String city;
+
+    private String linkPhoto;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

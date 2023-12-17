@@ -7,6 +7,7 @@ import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
 import org.binaracademy.finalproject.model.request.UpdateSubjectRequest;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.service.CourseService;
+import org.binaracademy.finalproject.service.OrderService;
 import org.binaracademy.finalproject.service.SubjectService;
 import org.binaracademy.finalproject.service.UserService;
 import org.binaracademy.finalproject.service.implement.CategoryAndRoleService;
@@ -33,6 +34,9 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private OrderService orderService;
 
     @PostMapping(value = "/course/add",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -66,9 +70,9 @@ public class AdminController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateCourse(@PathVariable String code, @RequestBody UpdateCourseRequest course){
         try {
+            courseService.updateCourse(course, code);
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Update course successful!",
-                    courseService.updateCourse(course, code));
+                    "Update course successful!", courseService.getCourse(code));
         } catch (RuntimeException runtimeException) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     runtimeException.getMessage(), null);
@@ -95,8 +99,9 @@ public class AdminController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateSubject(@PathVariable String code, @RequestBody UpdateSubjectRequest subject){
         try {
+            subjectService.updateSubject(subject, code);
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Update subject successful!", subjectService.updateSubject(subject, code));
+                    "Update subject successful!", subjectService.getSubject(code));
         } catch (RuntimeException runtimeException) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     runtimeException.getMessage(), null);
@@ -134,7 +139,7 @@ public class AdminController {
     public ResponseEntity<Object> getRoles() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all roles",
+                    "Success get all roles!",
                     service.getRoles());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
@@ -145,20 +150,55 @@ public class AdminController {
     public ResponseEntity<Object> getAllCourse(){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all users",
+                    "Success get all users!",
                     userService.getAllUser());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
     }
 
-    @GetMapping(value = "/course/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/course/getAllCourse", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get course yang ada ID-nya")
     public ResponseEntity<Object> getCourseAdmin() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all roles",
+                    "Success get all courses!",
                     courseService.getAllCourseAdmin());
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/subject/getAllSubject", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getAllSubject(){
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success get all subject",
+                    subjectService.getAllSubject());
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/subject/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getAllSubject(@RequestParam String code){
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success getting subject",
+                    subjectService.getSubject(code));
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/order/getAllOrderTransactions", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getAllOrder() {
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success getting all order transactions", orderService.getAllOrder());
+        } catch (RuntimeException rte) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    rte.getMessage(), null);
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }

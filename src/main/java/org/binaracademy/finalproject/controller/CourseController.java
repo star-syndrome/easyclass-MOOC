@@ -47,22 +47,6 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/detailsFromCode", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> courseDetailFromCode(@RequestParam String code) {
-        CourseDTO courseDTO = courseService.courseDetailFromCode(code);
-        try {
-            if (Objects.nonNull(courseDTO)) {
-                return ResponseController.statusResponse(HttpStatus.OK,
-                        "Success getting all information about course " + code,
-                        courseService.courseDetailFromCode(code));
-            }
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    "Course not found!", null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
-    }
-
     @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getCourse(@RequestParam String code) {
         CourseResponse courseResponse = courseService.getCourse(code);

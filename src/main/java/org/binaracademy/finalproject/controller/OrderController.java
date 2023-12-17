@@ -16,12 +16,11 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping(value = "/get")
-    public ResponseEntity<Object> getOrder(String code) {
+    @GetMapping(value = "/getDataOrder")
+    public ResponseEntity<Object> getOrder(@RequestParam String title) {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success",
-                    orderService.getDataOrder(code));
+                    "Success", orderService.getDataOrder(title));
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -31,7 +30,21 @@ public class OrderController {
     public ResponseEntity<Object> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
         try {
             orderService.createOrder(createOrderRequest);
-            return ResponseController.statusResponse(HttpStatus.OK, "Success", null);
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/getOrderTransactions")
+    public ResponseEntity<Object> getOrderTransactions() {
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success getting order transaction", orderService.getOrderTransactions());
+        } catch (RuntimeException rte) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    rte.getMessage(), null);
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
