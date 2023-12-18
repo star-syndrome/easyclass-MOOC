@@ -50,7 +50,7 @@ public class OrderServiceImplements implements OrderService {
                         .ppn(course.getPriceCourse() * 0.11)
                         .totalPrice(course.getPriceCourse() + (course.getPriceCourse() * 0.11))
                         .build())
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Course not found!"));
     }
 
     @Override

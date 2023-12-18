@@ -81,7 +81,7 @@ public class SubjectServiceImplements implements SubjectService {
                         .link(subject.getLinkVideo())
                         .isPremium(subject.getIsPremium())
                         .build())
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Subject not found!"));
     }
 
     @Override

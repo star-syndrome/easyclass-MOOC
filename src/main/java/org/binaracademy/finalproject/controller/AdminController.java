@@ -186,6 +186,9 @@ public class AdminController {
             return ResponseController.statusResponse(HttpStatus.OK,
                     "Success getting subject",
                     subjectService.getSubject(code));
+        } catch (RuntimeException rte) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    rte.getMessage(), null);
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
