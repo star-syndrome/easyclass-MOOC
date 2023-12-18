@@ -107,7 +107,8 @@ public class AuthServiceImplements implements AuthService {
         emailService.sendEmail(EmailRequest.builder()
                         .subject("One Time Password")
                         .recipient(users.getEmail())
-                        .content(oneTimePassword.getOtp())
+                        .content("Please input this OTP " + oneTimePassword.getOtp() +
+                                " to verify your account for access Easy Class, thank you!")
                 .build());
 
         log.info("User registered successfully, username: {}", users.getUsername());

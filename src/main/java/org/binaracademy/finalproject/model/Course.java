@@ -25,21 +25,13 @@ public class Course {
     private String id;
 
     private String aboutCourse;
-
     private String titleCourse;
-
     private String codeCourse;
-
     private Double priceCourse;
-
     private String levelCourse;
-
     private String teacher;
-
     private Boolean isPremium;
-
     private String module;
-
     private String duration;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -51,4 +43,7 @@ public class Course {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private List<Subject> subjects;
+
+    @OneToMany(mappedBy = "course")
+    private List<Order> orders;
 }

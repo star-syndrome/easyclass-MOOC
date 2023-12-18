@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.model.request.UpdateSubjectRequest;
 import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Subject;
+import org.binaracademy.finalproject.model.response.SubjectResponseAdmin;
 import org.binaracademy.finalproject.repository.SubjectRepository;
 import org.binaracademy.finalproject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +54,35 @@ public class SubjectServiceImplements implements SubjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SubjectResponse> getAllSubject() {
+    public List<SubjectResponseAdmin> getAllSubject() {
+        log.info("Getting all of list subject!");
         log.info("Getting all of list subject!");
         return subjectRepository.findAll().stream()
-                .map(this::toSubjectResponse)
+                .map(subject -> SubjectResponseAdmin.builder()
+                        .id(subject.getId())
+                        .code(subject.getCode())
+                        .title(subject.getTitle())
+                        .description(subject.getDescription())
+                        .link(subject.getLinkVideo())
+                        .isPremium(subject.getIsPremium())
+                        .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SubjectResponseAdmin getSubject(String code) {
+        log.info("Success getting subject where subject code: {}", code);
+        return subjectRepository.findByCode(code)
+                .map(subject -> SubjectResponseAdmin.builder()
+                        .id(subject.getId())
+                        .code(subject.getCode())
+                        .title(subject.getTitle())
+                        .description(subject.getDescription())
+                        .link(subject.getLinkVideo())
+                        .isPremium(subject.getIsPremium())
+                        .build())
+                .orElseThrow(() -> new RuntimeException("Subject not found!"));
     }
 
     @Override

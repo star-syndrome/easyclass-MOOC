@@ -98,9 +98,10 @@ public class CourseServiceImplements implements CourseService {
             courses.setIsPremium(updateCourse.getIsPremium() == null ? courses.getIsPremium() : updateCourse.getIsPremium());
             courses.setTeacher(updateCourse.getTeacher() == null ? courses.getTeacher() : updateCourse.getTeacher());
             courses.setCategories(updateCourse.getCategories() == null ? courses.getCategories() : updateCourse.getCategories());
+            courses.setDuration(updateCourse.getDuration() == null ? courses.getDuration() : updateCourse.getDuration());
+            courses.setModule(updateCourse.getModule() == null ? courses.getModule() : updateCourse.getModule());
             courseRepository.save(courses);
             log.info("Updating course with code: " + code + " successful!");
-
             return toCourseResponse(courses);
         } catch (Exception e) {
             log.error("Update course failed");
@@ -129,9 +130,9 @@ public class CourseServiceImplements implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public CourseDTO courseDetails(String titleCourse) {
+    public CourseDTO courseDetailsFromTitle(String titleCourse) {
         log.info("Getting course detail information from course " + titleCourse);
-        return Optional.ofNullable(courseRepository.findByTitleCourse(titleCourse))
+        return courseRepository.findByTitleCourse(titleCourse)
                 .map(courses -> CourseDTO.builder()
                         .addCourseResponse(AddCourseResponse.builder()
                                 .about(courses.getAboutCourse())
@@ -179,5 +180,24 @@ public class CourseServiceImplements implements CourseService {
                         .duration(course.getDuration())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CourseResponse getCourse(String code) {
+        log.info("Success getting course where course code: {}", code);
+        return courseRepository.findByCodeCourse(code)
+                .map(course -> CourseResponse.builder()
+                        .title(course.getTitleCourse())
+                        .price(course.getPriceCourse())
+                        .level(course.getLevelCourse())
+                        .code(course.getCodeCourse())
+                        .isPremium(course.getIsPremium())
+                        .module(course.getModule())
+                        .duration(course.getDuration())
+                        .teacher(course.getTeacher())
+                        .categories(course.getCategories())
+                        .build())
+                .orElse(null);
     }
 }

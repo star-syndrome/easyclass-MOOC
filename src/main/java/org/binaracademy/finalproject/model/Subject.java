@@ -25,12 +25,8 @@ public class Subject {
     private Course course;
 
     private String code;
-
     private String title;
-
     private String linkVideo;
-
     private String description;
-
     private Boolean isPremium;
 }

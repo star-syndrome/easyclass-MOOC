@@ -38,6 +38,7 @@ public class UserServiceImplements implements UserService {
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
+                .linkPhoto(users.getLinkPhoto())
                 .build();
     }
 
@@ -50,6 +51,7 @@ public class UserServiceImplements implements UserService {
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
+                .linkPhoto(users.getLinkPhoto())
                 .build();
     }
 
@@ -61,11 +63,13 @@ public class UserServiceImplements implements UserService {
             Optional<Users> users = Optional.ofNullable(userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found")));
             Users users1 = users.get();
+
             users1.setPhoneNumber(updateUsers.getPhoneNumber() == null ? users1.getPhoneNumber() : updateUsers.getPhoneNumber());
             users1.setCountry(updateUsers.getCountry() == null ? users1.getCountry() : updateUsers.getCountry());
             users1.setCity(updateUsers.getCity() == null ? users1.getCity() : updateUsers.getCity());
             userRepository.save(users1);
             log.info("Updating user successful!");
+
             return toUserResponse(users1);
         } catch (Exception e) {
             log.error("Update user failed");
@@ -115,6 +119,7 @@ public class UserServiceImplements implements UserService {
         userResponse.setPhoneNumber(users1.getPhoneNumber());
         userResponse.setCountry(users1.getCountry());
         userResponse.setCity(users1.getCity());
+        userResponse.setLinkPhoto(users1.getLinkPhoto());
 
         return userResponse;
     }

@@ -1,0 +1,57 @@
+package org.binaracademy.finalproject.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import org.binaracademy.finalproject.model.request.CreateOrderRequest;
+import org.binaracademy.finalproject.model.response.ResponseController;
+import org.binaracademy.finalproject.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@CrossOrigin("*")
+@RestController
+@RequestMapping("/api/order")
+public class OrderController {
+
+    @Autowired
+    private OrderService orderService;
+
+    @GetMapping(value = "/getOrder")
+    @Operation(summary = "Inputkan title course")
+    public ResponseEntity<Object> getOrder(@RequestParam String title) {
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success", orderService.getDataOrder(title));
+        } catch (RuntimeException rte) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/createOrder")
+    public ResponseEntity<Object> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+        try {
+            orderService.createOrder(createOrderRequest);
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/getOrderTransactions")
+    public ResponseEntity<Object> getOrderTransactions() {
+        try {
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success getting order transaction", orderService.getOrderTransactions());
+        } catch (RuntimeException rte) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    rte.getMessage(), null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+}
