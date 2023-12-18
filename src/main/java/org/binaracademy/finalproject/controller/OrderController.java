@@ -32,9 +32,10 @@ public class OrderController {
     @PostMapping(value = "/create")
     public ResponseEntity<Object> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
         try {
-            orderService.createOrder(createOrderRequest);
-            return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success", null);
+            return ResponseEntity.ok().body(orderService.createOrder(createOrderRequest));
+        } catch (RuntimeException rte) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    rte.getMessage(), null);
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
