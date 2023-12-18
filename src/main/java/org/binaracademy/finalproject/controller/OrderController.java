@@ -25,7 +25,7 @@ public class OrderController {
                     "Success", orderService.getDataOrder(title));
         } catch (RuntimeException rte) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    "Course not found!", null);
+                    rte.getMessage(), null);
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }

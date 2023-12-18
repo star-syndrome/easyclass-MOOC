@@ -87,8 +87,7 @@ public class AdminController {
     public ResponseEntity<Object> addSubject(@RequestBody Subject subject){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Add new subject successful",
-                    subjectService.addSubject(subject));
+                    "Add new subject successful", subjectService.addSubject(subject));
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -127,8 +126,7 @@ public class AdminController {
     public ResponseEntity<Object> getCategory() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all category",
-                    service.getCategory());
+                    "Success get all category", service.getCategory());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -138,8 +136,7 @@ public class AdminController {
     public ResponseEntity<Object> getRoles() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all roles",
-                    service.getRoles());
+                    "Success get all roles", service.getRoles());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -149,8 +146,7 @@ public class AdminController {
     public ResponseEntity<Object> getAllCourse(){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all users",
-                    userService.getAllUser());
+                    "Success get all users", userService.getAllUser());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -161,8 +157,7 @@ public class AdminController {
     public ResponseEntity<Object> getCourseAdmin() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all roles",
-                    courseService.getAllCourseAdmin());
+                    "Success get all roles", courseService.getAllCourseAdmin());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -172,8 +167,7 @@ public class AdminController {
     public ResponseEntity<Object> getAllSubject(){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all subject",
-                    subjectService.getAllSubject());
+                    "Success get all subject", subjectService.getAllSubject());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -183,8 +177,7 @@ public class AdminController {
     public ResponseEntity<Object> getAllSubject(@RequestParam String code){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success getting subject",
-                    subjectService.getSubject(code));
+                    "Success getting subject", subjectService.getSubject(code));
         } catch (RuntimeException rte) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     rte.getMessage(), null);
