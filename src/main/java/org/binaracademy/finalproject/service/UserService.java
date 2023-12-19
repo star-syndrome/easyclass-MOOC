@@ -10,7 +10,7 @@ public interface UserService {
 
     UserResponse updateUsers(UpdateUserRequest updateUsers);
 
-    void deleteUsersByUsername(String username);
+    void deleteUsersByUsername();
 
     List<GetUserResponse> getAllUser();
 

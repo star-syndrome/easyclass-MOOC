@@ -51,7 +51,7 @@ public class AdminController {
         }
     }
 
-    @DeleteMapping(value = "/course/delete/{codeCourse}")
+    @DeleteMapping(value = "/course/delete/{codeCourse}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> deleteCourse(@PathVariable String codeCourse){
         try {
             courseService.deleteCourseByCode(codeCourse);
@@ -110,7 +110,7 @@ public class AdminController {
         }
     }
 
-    @DeleteMapping(value = "/subject/delete/{code}")
+    @DeleteMapping(value = "/subject/delete/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> deleteSubject(@PathVariable String code){
         try {
             subjectService.deleteSubjectByCode(code);

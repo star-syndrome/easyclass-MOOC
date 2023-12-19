@@ -120,6 +120,11 @@ public class OrderServiceImplements implements OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteByUsername(String username) {
+        orderRepository.deleteByUsers(userRepository.getUserByUsername(username).get());
+    }
+
     private OrderDTO getOrderDTO(Order order) {
         return OrderDTO.builder()
                 .id(order.getUsers().getId())
