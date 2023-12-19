@@ -54,10 +54,10 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "/delete/{username}")
-    public ResponseEntity<Object> deleteUser(@PathVariable String username){
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<Object> deleteUser(){
         try {
-            userService.deleteUsersByUsername(username);
+            userService.deleteUsersByUsername();
             return ResponseController.statusResponse(HttpStatus.OK,
                     "Deleting user successful!", null);
         } catch (RuntimeException runtimeException) {

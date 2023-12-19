@@ -16,4 +16,6 @@ public interface OrderService {
     OrderDTO getOrderTransactions();
 
     List<OrderDTO> getAllOrder();
+
+    void deleteByUsername(String username);
 }

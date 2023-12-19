@@ -7,11 +7,11 @@ import org.binaracademy.finalproject.model.request.UpdateUserRequest;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.OTPService;
+import org.binaracademy.finalproject.service.OrderService;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +29,9 @@ public class UserServiceImplements implements UserService {
 
     @Autowired
     private OTPService otpService;
+
+    @Autowired
+    private OrderService orderService;
 
     private UserResponse toUserResponse(Users users) {
         return UserResponse.builder()
@@ -78,16 +81,16 @@ public class UserServiceImplements implements UserService {
     }
 
     @Override
-    public void deleteUsersByUsername(String username) {
+    public void deleteUsersByUsername() {
         try {
-            Users users = userRepository.findByUsername(username).orElse(null);
-            if (!Optional.ofNullable(users).isPresent()){
-                log.info("User is not available");
-            }
-            otpService.deleteByUsername(username);
-            assert users != null;
-            users.getRoles().clear();
-            userRepository.deleteUserFromUsername(username);
+            String user = getAuth();
+            Optional<Users> users = userRepository.findByUsername(user);
+            Users users1 = users.get();
+
+            otpService.deleteByUsername(users1.getUsername());
+            orderService.deleteByUsername(users1.getUsername());
+            users1.getRoles().clear();
+            userRepository.deleteUserFromUsername(users1.getUsername());
             log.info("Successfully deleted user!");
         } catch (Exception e){
             log.error("Deleting user failed, please try again!");
