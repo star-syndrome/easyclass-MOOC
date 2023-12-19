@@ -81,6 +81,7 @@ public class OrderServiceImplements implements OrderService {
             order.setCourse(courseRepository.findByTitleCourse(createOrderRequest.getCourseTitle()).orElseThrow(() -> new RuntimeException("Course not found")));
 
             orderRepository.save(order);
+            log.info("Create order successfully");
             return MessageResponse.builder()
                     .message("Create order successfully!")
                     .build();
