@@ -2,6 +2,7 @@ package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.DTO.OrderDTO;
+import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.Order;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.CreateOrderRequest;
@@ -10,6 +11,7 @@ import org.binaracademy.finalproject.model.response.OrderResponse;
 import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.repository.OrderRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
+import org.binaracademy.finalproject.security.response.MessageResponse;
 import org.binaracademy.finalproject.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,10 +56,22 @@ public class OrderServiceImplements implements OrderService {
     }
 
     @Override
-    public void createOrder(CreateOrderRequest createOrderRequest) {
+    public MessageResponse createOrder(CreateOrderRequest createOrderRequest) {
         try {
             log.info("Processing create order from course: {}", createOrderRequest.getCourseTitle());
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            Optional<Users> users = userRepository.findByUsername(username);
+            Optional<Course> course = courseRepository.findByTitleCourse(createOrderRequest.getCourseTitle());
+            Users user = users.get();
+            Course courses = course.get();
+
+            Boolean existsByUser = orderRepository.existsByUsers(user);
+            Boolean existsByCourse = orderRepository.existsByCourse(courses);
+            if (Boolean.TRUE.equals(existsByUser) && Boolean.TRUE.equals(existsByCourse)) {
+                return MessageResponse.builder()
+                        .message("User already ordered this course!")
+                        .build();
+            }
 
             Order order = new Order();
             order.setPaymentMethod(createOrderRequest.getPaymentMethod());
@@ -67,7 +81,9 @@ public class OrderServiceImplements implements OrderService {
             order.setCourse(courseRepository.findByTitleCourse(createOrderRequest.getCourseTitle()).orElseThrow(() -> new RuntimeException("Course not found")));
 
             orderRepository.save(order);
-            log.info("Create order successfully!");
+            return MessageResponse.builder()
+                    .message("Create order successfully!")
+                    .build();
         } catch (Exception e) {
             log.error("Create order where course " + createOrderRequest.getCourseTitle() + " failed");
             throw e;

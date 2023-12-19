@@ -5,7 +5,6 @@ import org.binaracademy.finalproject.model.OneTimePassword;
 import org.binaracademy.finalproject.model.Roles;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.EmailRequest;
-import org.binaracademy.finalproject.model.request.OTPRequest;
 import org.binaracademy.finalproject.repository.RoleRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.security.UserDetailsImpl;
@@ -13,7 +12,7 @@ import org.binaracademy.finalproject.security.config.JwtUtils;
 import org.binaracademy.finalproject.security.enumeration.ERole;
 import org.binaracademy.finalproject.security.request.LoginRequest;
 import org.binaracademy.finalproject.security.request.SignupRequest;
-import org.binaracademy.finalproject.security.response.JwtResponse;
+import org.binaracademy.finalproject.security.response.JwtResponseSignIn;
 import org.binaracademy.finalproject.security.response.MessageResponse;
 import org.binaracademy.finalproject.service.AuthService;
 import org.binaracademy.finalproject.service.EmailService;
@@ -118,7 +117,7 @@ public class AuthServiceImplements implements AuthService {
     }
 
     @Override
-    public JwtResponse authenticateUser(LoginRequest login) {
+    public JwtResponseSignIn authenticateUser(LoginRequest login) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword())
         );
@@ -131,19 +130,6 @@ public class AuthServiceImplements implements AuthService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         log.info("User: " + userDetails.getUsername() + " successfully sign in");
-        return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles);
-    }
-
-    @Override
-    public MessageResponse otpVerify(OTPRequest otpRequest) {
-        String oneTimePassword = otpRequest.getOtp();
-        otpService.findByOtp(oneTimePassword)
-                .map(otpService::verifyExpiration)
-                .map(OneTimePassword::getUsers)
-                .map(users -> "Your account is verify!")
-                .orElseThrow(() -> new RuntimeException("OTP different! Please check your OTP correctly"));
-        return MessageResponse.builder()
-                .message("Successfully verify OTP! Please sign in to access easyclass!")
-                .build();
+        return new JwtResponseSignIn(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles);
     }
 }
