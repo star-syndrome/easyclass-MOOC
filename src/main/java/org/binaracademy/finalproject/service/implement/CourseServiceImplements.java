@@ -98,6 +98,8 @@ public class CourseServiceImplements implements CourseService {
             courses.setIsPremium(updateCourse.getIsPremium() == null ? courses.getIsPremium() : updateCourse.getIsPremium());
             courses.setTeacher(updateCourse.getTeacher() == null ? courses.getTeacher() : updateCourse.getTeacher());
             courses.setCategories(updateCourse.getCategories() == null ? courses.getCategories() : updateCourse.getCategories());
+            courses.setModule(updateCourse.getModule() == null ? courses.getModule() : updateCourse.getModule());
+            courses.setDuration(updateCourse.getDuration() == null ? courses.getDuration() : updateCourse.getDuration());
             courseRepository.save(courses);
             log.info("Updating course with code: " + code + " successful!");
 
