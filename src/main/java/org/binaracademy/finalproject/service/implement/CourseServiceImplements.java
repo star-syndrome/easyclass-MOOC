@@ -119,6 +119,7 @@ public class CourseServiceImplements implements CourseService {
                 log.info("Course is not available");
             }
             assert course != null;
+            course.getOrders().clear();
             course.getCategories().clear();
             course.getSubjects().clear();
             log.info("Deleting the course with course code: {} successful!", codeCourse);
@@ -136,6 +137,7 @@ public class CourseServiceImplements implements CourseService {
         return courseRepository.findByTitleCourse(titleCourse)
                 .map(courses -> CourseDTO.builder()
                         .addCourseResponse(AddCourseResponse.builder()
+
                                 .about(courses.getAboutCourse())
                                 .code(courses.getCodeCourse())
                                 .title(courses.getTitleCourse())

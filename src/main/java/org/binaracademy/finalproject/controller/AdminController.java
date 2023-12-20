@@ -206,4 +206,18 @@ public class AdminController {
             return ResponseController.internalServerError(e.getMessage());
         }
     }
+
+    @DeleteMapping(value = "/user/deleteUserForAdmin/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> deleteUserForAdmin(@PathVariable String username) {
+        try {
+            userService.deleteUserForAdmin(username);
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Deleting user successful!", null);
+        } catch (RuntimeException runtimeException) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    runtimeException.getMessage(), null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
 }

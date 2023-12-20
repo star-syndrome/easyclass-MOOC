@@ -44,6 +44,7 @@ public class Course {
     @JoinColumn(name = "course_id")
     private List<Subject> subjects;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
     private List<Order> orders;
 }

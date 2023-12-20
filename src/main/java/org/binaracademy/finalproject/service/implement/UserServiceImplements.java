@@ -125,6 +125,26 @@ public class UserServiceImplements implements UserService {
         return userResponse;
     }
 
+    @Override
+    public void deleteUserForAdmin(String username) {
+        log.info("Trying to deleting user with username: {}", username);
+        try {
+            Users users = userRepository.findByUsername(username).orElse(null);
+            if (!Optional.ofNullable(users).isPresent()) {
+                log.info("User is not available");
+            }
+            otpService.deleteByUsername(username);
+            orderService.deleteByUsername(username);
+            assert users != null;
+            users.getRoles().clear();
+            userRepository.deleteUserFromUsername(username);
+            log.info("Successfully deleted user!");
+        } catch (Exception e) {
+            log.error("Deleting user failed, please try again!");
+            throw e;
+        }
+    }
+
     private String getAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
