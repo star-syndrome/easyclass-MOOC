@@ -118,6 +118,7 @@ public class CourseServiceImplements implements CourseService {
                 log.info("Course is not available");
             }
             assert course != null;
+            course.getOrders().clear();
             course.getCategories().clear();
             course.getSubjects().clear();
             log.info("Deleting the course with course code: {} successful!", codeCourse);

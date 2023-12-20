@@ -44,8 +44,7 @@ public class AdminController {
     public ResponseEntity<Object> addCourse(@RequestBody Course course){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Adding new course successful!",
-                    courseService.addNewCourse(course));
+                    "Adding new course successful!", courseService.addNewCourse(course));
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -71,8 +70,7 @@ public class AdminController {
     public ResponseEntity<Object> updateCourse(@PathVariable String code, @RequestBody UpdateCourseRequest course){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Update course successful!",
-                    courseService.updateCourse(course, code));
+                    "Update course successful!", courseService.updateCourse(course, code));
         } catch (RuntimeException runtimeException) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     runtimeException.getMessage(), null);
@@ -194,6 +192,20 @@ public class AdminController {
         } catch (RuntimeException rte) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     rte.getMessage(), null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @DeleteMapping(value = "/user/deleteUserForAdmin/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> deleteUserForAdmin(@PathVariable String username) {
+        try {
+            userService.deleteUserForAdmin(username);
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Deleting user successful!", null);
+        } catch (RuntimeException runtimeException) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    runtimeException.getMessage(), null);
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }

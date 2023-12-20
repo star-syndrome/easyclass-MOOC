@@ -33,7 +33,6 @@ public class Order {
     @JoinColumn(name = "user_id")
     private Users users;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Course course;
 }
