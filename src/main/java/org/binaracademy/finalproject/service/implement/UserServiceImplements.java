@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.request.ChangePasswordRequest;
 import org.binaracademy.finalproject.model.response.GetUserResponse;
 import org.binaracademy.finalproject.model.response.UserResponse;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
@@ -10,11 +11,15 @@ import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.OrderService;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -151,5 +156,26 @@ public class UserServiceImplements implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         return username;
+    }
+
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository repository;
+    public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
+
+        Users user = (Users) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        //ngecek pw nya udah bener lom
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalStateException("Wrong Password");
+        }
+        // cek confirm password udah sama blom
+        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
+            throw new IllegalStateException("Wrong Password");
+        }
+        //update trus save pwnya
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        //update pwnya ke user
+        repository.save(user);
     }
 }

@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.request.ChangePasswordRequest;
 import org.binaracademy.finalproject.model.request.UploadImageRequest;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Optional;
 
 @CrossOrigin("*")
@@ -84,5 +86,14 @@ public class UserController {
                 .orElse(new ResponseEntity<>(MessageResponse.builder()
                         .message("Upload image failed")
                         .build(), HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+    @PatchMapping(value = "/reset")
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequest request,
+            Principal connectedUser
+    )  {
+        userService.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
+
     }
 }
