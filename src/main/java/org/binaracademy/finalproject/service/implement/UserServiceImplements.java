@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.request.ChangePasswordRequest;
 import org.binaracademy.finalproject.model.response.GetUserResponse;
 import org.binaracademy.finalproject.model.response.UserResponse;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
@@ -13,6 +14,7 @@ import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,9 @@ public class UserServiceImplements implements UserService {
 
     @Autowired
     private ResetPasswordService resetPasswordService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private UserResponse toUserResponse(Users users) {
         return UserResponse.builder()
@@ -149,6 +154,24 @@ public class UserServiceImplements implements UserService {
             log.error("Deleting user failed, please try again!");
             throw e;
         }
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+        String username = getAuth();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users users1 = users.get();
+
+        log.info("Trying to change password for user: {}", users1.getUsername());
+        if (!passwordEncoder.matches(request.getCurrentPassword(), users1.getPassword())) {
+            throw new IllegalStateException("Wrong Password");
+        }
+        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
+            throw new IllegalStateException("Wrong Password");
+        }
+        users1.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(users1);
+        log.info("Successfully change password!");
     }
 
     private String getAuth() {

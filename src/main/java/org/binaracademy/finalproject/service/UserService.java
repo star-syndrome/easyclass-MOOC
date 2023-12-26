@@ -1,9 +1,11 @@
 package org.binaracademy.finalproject.service;
 
+import org.binaracademy.finalproject.model.request.ChangePasswordRequest;
 import org.binaracademy.finalproject.model.response.GetUserResponse;
 import org.binaracademy.finalproject.model.response.UserResponse;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface UserService {
@@ -17,4 +19,6 @@ public interface UserService {
     UserResponse getUser();
 
     void deleteUserForAdmin(String username);
+
+    void changePassword(ChangePasswordRequest request);
 }
