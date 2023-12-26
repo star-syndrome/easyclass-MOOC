@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.request.ChangePasswordRequest;
 import org.binaracademy.finalproject.model.request.UploadImageRequest;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
@@ -84,5 +85,17 @@ public class UserController {
                 .orElse(new ResponseEntity<>(MessageResponse.builder()
                         .message("Upload image failed")
                         .build(), HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
+    @PatchMapping(value = "/changePassword")
+    public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        try {
+            userService.changePassword(changePasswordRequest);
+            return ResponseController.statusResponse(HttpStatus.OK, "Change Password successful!", null);
+        } catch (RuntimeException runtimeException) {
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND, runtimeException.getMessage(), null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
     }
 }

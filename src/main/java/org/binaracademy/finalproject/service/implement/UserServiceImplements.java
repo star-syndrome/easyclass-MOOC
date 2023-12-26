@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.request.ChangePasswordRequest;
 import org.binaracademy.finalproject.model.response.GetUserResponse;
 import org.binaracademy.finalproject.model.response.UserResponse;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
@@ -8,10 +9,12 @@ import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.OrderService;
+import org.binaracademy.finalproject.service.ResetPasswordService;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,12 @@ public class UserServiceImplements implements UserService {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ResetPasswordService resetPasswordService;
 
     private UserResponse toUserResponse(Users users) {
         return UserResponse.builder()
@@ -87,6 +96,7 @@ public class UserServiceImplements implements UserService {
             Optional<Users> users = userRepository.findByUsername(user);
             Users users1 = users.get();
 
+            resetPasswordService.deleteByUsername(users1.getUsername());
             otpService.deleteByUsername(users1.getUsername());
             orderService.deleteByUsername(users1.getUsername());
             users1.getRoles().clear();
@@ -135,6 +145,7 @@ public class UserServiceImplements implements UserService {
             if (!Optional.ofNullable(users).isPresent()) {
                 log.info("User is not available");
             }
+            resetPasswordService.deleteByUsername(username);
             otpService.deleteByUsername(username);
             orderService.deleteByUsername(username);
             assert users != null;
@@ -145,6 +156,24 @@ public class UserServiceImplements implements UserService {
             log.error("Deleting user failed, please try again!");
             throw e;
         }
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+        String username = getAuth();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users users1 = users.get();
+
+        log.info("Trying to change password for user: {}", users1.getUsername());
+        if (!passwordEncoder.matches(request.getCurrentPassword(), users1.getPassword())) {
+            throw new IllegalStateException("Wrong Password");
+        }
+        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
+            throw new IllegalStateException("Wrong Password");
+        }
+        users1.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(users1);
+        log.info("Successfully changed password!");
     }
 
     private String getAuth() {

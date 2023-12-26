@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("/**", "/api/auth/**", "/api/course/get", "/api/course/getAll", "/api/course/detailsFromTitle",
-                        "/api/user/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
+                        "/api/user/**", "/api/course/getCourseOrder","/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
                 .antMatchers("/api/admin/**").hasAuthority(ERole.ROLE_ADMIN.name())
                 .antMatchers("/api/order/**").hasAuthority(ERole.ROLE_USER.name())
                 .anyRequest()

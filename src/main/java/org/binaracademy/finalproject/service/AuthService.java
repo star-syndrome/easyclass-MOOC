@@ -11,4 +11,6 @@ public interface AuthService {
     MessageResponse registerUser(SignupRequest signupRequest);
 
     JwtResponseSignIn authenticateUser(LoginRequest login);
+
+    MessageResponse sendToken(String username);
 }

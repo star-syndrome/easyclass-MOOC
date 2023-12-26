@@ -24,4 +24,5 @@ public class AddCourseResponse {
     private Set<Category> categories;
     private String module;
     private String duration;
+    private String linkTelegram;
 }

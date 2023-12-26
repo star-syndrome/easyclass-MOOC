@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @CrossOrigin("*")
@@ -54,6 +55,21 @@ public class CourseController {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
                         "Success get course " + code, courseService.getCourse(code));
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/getCourseOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getCourseOrder() {
+        List<CourseResponse> courseResponse = courseService.getCourseAfterOrder();
+        try {
+            if (Objects.nonNull(courseResponse)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Success get course!", courseService.getCourseAfterOrder());
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);
