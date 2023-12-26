@@ -5,7 +5,6 @@ import org.binaracademy.finalproject.model.response.GetUserResponse;
 import org.binaracademy.finalproject.model.response.UserResponse;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
 
-import java.security.Principal;
 import java.util.List;
 
 public interface UserService {
@@ -16,7 +15,7 @@ public interface UserService {
 
     List<GetUserResponse> getAllUser();
 
-    UserResponse getUser();
+    GetUserResponse getUser();
 
     void deleteUserForAdmin(String username);
 

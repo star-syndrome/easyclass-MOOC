@@ -9,6 +9,7 @@ import org.binaracademy.finalproject.model.request.CreateOrderRequest;
 import org.binaracademy.finalproject.model.request.EmailRequest;
 import org.binaracademy.finalproject.model.response.OrderResponse;
 import org.binaracademy.finalproject.model.response.GetOrderResponse;
+import org.binaracademy.finalproject.model.response.OrderResponseForGetOrderTransaction;
 import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.repository.OrderRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
@@ -90,8 +91,8 @@ public class OrderServiceImplements implements OrderService {
             emailService.sendEmail(EmailRequest.builder()
                             .recipient(user.getEmail())
                             .subject("E-receipt easyclass")
-                            .content("This is your receipt!" + "\nCourse: " + order.getCourse().getTitleCourse() + " || \nPayment: " + order.getPaymentMethod()
-                                    + " || \nOrder Time: " + order.getOrderTime() + " || \nOrder Id: " + order.getId() + ". " + "\nThank you!")
+                            .content("This is your receipt!" + "\nCourse: " + order.getCourse().getTitleCourse() + "\nPayment: " + order.getPaymentMethod()
+                                    + "\nOrder Time: " + order.getOrderTime() + "\nOrder Id: " + order.getId() + "\nThank you!")
                     .build());
 
             return MessageResponse.builder()
@@ -114,7 +115,7 @@ public class OrderServiceImplements implements OrderService {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(getOrder.getId());
         orderDTO.setOrderResponses(getOrder.getOrders().stream()
-                .map(order -> OrderResponse.builder()
+                .map(order -> OrderResponseForGetOrderTransaction.builder()
                         .time(order.getOrderTime())
                         .paymentMethod(order.getPaymentMethod())
                         .completed(order.getPaid())
@@ -126,10 +127,10 @@ public class OrderServiceImplements implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getAllOrder() {
+    public List<OrderResponse> getAllOrder() {
         log.info("Success getting all order from all user!");
         return orderRepository.findAll().stream()
-                .map(this::getOrderDTO)
+                .map(this::getOrderResponse)
                 .collect(Collectors.toList());
     }
 
@@ -138,19 +139,13 @@ public class OrderServiceImplements implements OrderService {
         orderRepository.deleteByUsers(userRepository.getUserByUsername(username).get());
     }
 
-    private OrderDTO getOrderDTO(Order order) {
-        return OrderDTO.builder()
-                .id(order.getUsers().getId())
-                .orderResponses(order.getCourse().getOrders().stream()
-                        .map(orders -> {
-                            OrderResponse orderResponse = new OrderResponse();
-                            orderResponse.setCourseId(orders.getCourse().getId());
-                            orderResponse.setTime(orders.getOrderTime());
-                            orderResponse.setPaymentMethod(orders.getPaymentMethod());
-                            orderResponse.setCompleted(orders.getPaid());
-                            return orderResponse;
-                        })
-                        .collect(Collectors.toList()))
+    private OrderResponse getOrderResponse(Order order) {
+        return OrderResponse.builder()
+                .userId(order.getUsers().getId())
+                .paymentMethod(order.getPaymentMethod())
+                .time(order.getOrderTime())
+                .completed(order.getPaid())
+                .courseId(order.getCourse().getId())
                 .build();
     }
 }

@@ -60,7 +60,7 @@ public class EmailServiceImplements implements EmailService {
             MimeMessage message = new MimeMessage(session);
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(emailRequest.getRecipient()));
             message.setSubject(emailRequest.getSubject());
-            message.setContent(emailRequest.getContent(), "text/html; charset=utf-8");
+            message.setText(emailRequest.getContent());
             //send message
             Transport.send(message);
             log.info("message sent successfully to {}", emailRequest.getRecipient());

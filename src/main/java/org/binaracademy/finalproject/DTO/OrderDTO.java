@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.binaracademy.finalproject.model.response.OrderResponse;
+import org.binaracademy.finalproject.model.response.OrderResponseForGetOrderTransaction;
 
 import java.util.List;
 @Data
@@ -14,5 +15,5 @@ import java.util.List;
 public class OrderDTO {
 
     private Long id;
-    private List<OrderResponse> orderResponses;
+    private List<OrderResponseForGetOrderTransaction> orderResponses;
 }

@@ -12,11 +12,11 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderResponse {
+public class OrderResponseForGetOrderTransaction {
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date time;
-    private Long userId;
+
     private String paymentMethod;
     private String courseId;
     private Boolean completed;
