@@ -147,7 +147,8 @@ public class AuthServiceImplements implements AuthService {
         emailService.sendEmail(EmailRequest.builder()
                 .subject("Reset Password for Easy Class")
                 .recipient(users.getEmail())
-                .content("https://easyclass-course.vercel.app/auth/resetPassword?token=" + resetPassword.getToken())
+                .content("https://easyclass-course.vercel.app/auth/resetPassword?token=" + resetPassword.getToken()
+                        + "\n\nhttp://localhost:5173/auth/resetPassword?token=" + resetPassword.getToken())
                 .build());
         log.info("Send token for reset password successfully!");
         return MessageResponse.builder().message("Success sending a token for reset password!").build();

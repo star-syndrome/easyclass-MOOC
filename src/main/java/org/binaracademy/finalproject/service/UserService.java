@@ -15,7 +15,7 @@ public interface UserService {
 
     List<GetUserResponse> getAllUser();
 
-    UserResponse getUser();
+    GetUserResponse getUser();
 
     void deleteUserForAdmin(String username);
 

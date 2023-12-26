@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderResponse {
+@Builder
+public class OrderResponseForGetOrderTransactions {
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date time;
-    private Long userId;
+
     private String paymentMethod;
     private String courseId;
     private Boolean completed;

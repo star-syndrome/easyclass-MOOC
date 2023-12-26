@@ -119,22 +119,23 @@ public class UserServiceImplements implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponse getUser() {
+    public GetUserResponse getUser() {
         log.info("Getting information details from user!");
         String username = getAuth();
         Optional<Users> users = userRepository.findByUsername(username);
         Users users1 = users.get();
 
-        UserResponse userResponse = new UserResponse();
-        userResponse.setUsername(users1.getUsername());
-        userResponse.setEmail(users1.getEmail());
-        userResponse.setPassword(users1.getPassword());
-        userResponse.setPhoneNumber(users1.getPhoneNumber());
-        userResponse.setCountry(users1.getCountry());
-        userResponse.setCity(users1.getCity());
-        userResponse.setLinkPhoto(users1.getLinkPhoto());
+        GetUserResponse getUserResponse = new GetUserResponse();
+        getUserResponse.setId(users1.getId());
+        getUserResponse.setUsername(users1.getUsername());
+        getUserResponse.setEmail(users1.getEmail());
+        getUserResponse.setPassword(users1.getPassword());
+        getUserResponse.setPhoneNumber(users1.getPhoneNumber());
+        getUserResponse.setCountry(users1.getCountry());
+        getUserResponse.setCity(users1.getCity());
+        getUserResponse.setLinkPhoto(users1.getLinkPhoto());
 
-        return userResponse;
+        return getUserResponse;
     }
 
     @Override
