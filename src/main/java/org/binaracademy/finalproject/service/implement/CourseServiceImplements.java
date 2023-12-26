@@ -1,16 +1,17 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
-import org.binaracademy.finalproject.model.response.CourseResponse;
+import org.binaracademy.finalproject.model.response.*;
 import org.binaracademy.finalproject.DTO.CourseDTO;
-import org.binaracademy.finalproject.model.response.GetAllCourseAdminResponse;
-import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Course;
-import org.binaracademy.finalproject.model.response.AddCourseResponse;
 import org.binaracademy.finalproject.repository.CourseRepository;
+import org.binaracademy.finalproject.repository.OrderRepository;
+import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,12 @@ public class CourseServiceImplements implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     private CourseResponse toCourseResponse(Course course) {
         return CourseResponse.builder()
@@ -100,6 +107,7 @@ public class CourseServiceImplements implements CourseService {
             courses.setCategories(updateCourse.getCategories() == null ? courses.getCategories() : updateCourse.getCategories());
             courses.setModule(updateCourse.getModule() == null ? courses.getModule() : updateCourse.getModule());
             courses.setDuration(updateCourse.getDuration() == null ? courses.getDuration() : updateCourse.getDuration());
+            courses.setLinkTelegram(updateCourse.getLink() == null ? courses.getLinkTelegram() : updateCourse.getLink());
             courseRepository.save(courses);
             log.info("Updating course with code: " + code + " successful!");
 
@@ -134,10 +142,13 @@ public class CourseServiceImplements implements CourseService {
     @Transactional(readOnly = true)
     public CourseDTO courseDetailsFromTitle(String titleCourse) {
         log.info("Getting course detail information from course " + titleCourse);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users user = users.get();
+        Boolean hasOrder = courseRepository.hasOrder(user.getId());
         return courseRepository.findByTitleCourse(titleCourse)
                 .map(courses -> CourseDTO.builder()
                         .addCourseResponse(AddCourseResponse.builder()
-
                                 .about(courses.getAboutCourse())
                                 .code(courses.getCodeCourse())
                                 .title(courses.getTitleCourse())
@@ -148,6 +159,7 @@ public class CourseServiceImplements implements CourseService {
                                 .categories(courses.getCategories())
                                 .module(courses.getModule())
                                 .duration(courses.getDuration())
+                                .link(hasOrder ? courses.getLinkTelegram() : null)
                                 .build())
                         .subjectResponse(courses.getSubjects().stream()
                                 .map(subject -> {
@@ -200,6 +212,28 @@ public class CourseServiceImplements implements CourseService {
                         .duration(course.getDuration())
                         .teacher(course.getTeacher())
                         .categories(course.getCategories())
+                        .build())
+                .orElse(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CourseResponse getCourseAfterOrder() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users user = users.get();
+
+        return courseRepository.getCourse(user.getId())
+                .map(courseResponse -> CourseResponse.builder()
+                        .title(courseResponse.getTitleCourse())
+                        .price(courseResponse.getPriceCourse())
+                        .level(courseResponse.getLevelCourse())
+                        .code(courseResponse.getCodeCourse())
+                        .isPremium(courseResponse.getIsPremium())
+                        .module(courseResponse.getModule())
+                        .duration(courseResponse.getDuration())
+                        .teacher(courseResponse.getTeacher())
+                        .categories(courseResponse.getCategories())
                         .build())
                 .orElse(null);
     }

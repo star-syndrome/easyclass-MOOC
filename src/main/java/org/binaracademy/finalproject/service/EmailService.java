@@ -1,6 +1,5 @@
 package org.binaracademy.finalproject.service;
 
-import org.binaracademy.finalproject.model.OneTimePassword;
 import org.binaracademy.finalproject.model.request.EmailRequest;
 
 public interface EmailService {

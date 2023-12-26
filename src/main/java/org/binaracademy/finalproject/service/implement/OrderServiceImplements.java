@@ -6,12 +6,14 @@ import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.Order;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.CreateOrderRequest;
+import org.binaracademy.finalproject.model.request.EmailRequest;
 import org.binaracademy.finalproject.model.response.OrderResponse;
 import org.binaracademy.finalproject.model.response.GetOrderResponse;
 import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.repository.OrderRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.security.response.MessageResponse;
+import org.binaracademy.finalproject.service.EmailService;
 import org.binaracademy.finalproject.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +38,9 @@ public class OrderServiceImplements implements OrderService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     @Transactional(readOnly = true)
@@ -81,6 +86,14 @@ public class OrderServiceImplements implements OrderService {
             order.setCourse(courseRepository.findByTitleCourse(createOrderRequest.getCourseTitle()).orElseThrow(() -> new RuntimeException("Course not found")));
 
             orderRepository.save(order);
+
+            emailService.sendEmail(EmailRequest.builder()
+                            .recipient(user.getEmail())
+                            .subject("E-receipt easyclass")
+                            .content("This is your receipt!" + "\nCourse: " + order.getCourse().getTitleCourse() + " || \nPayment: " + order.getPaymentMethod()
+                                    + " || \nOrder Time: " + order.getOrderTime() + " || \nOrder Id: " + order.getId() + ". " + "\nThank you!")
+                    .build());
+
             return MessageResponse.builder()
                     .message("Create order successfully!")
                     .build();

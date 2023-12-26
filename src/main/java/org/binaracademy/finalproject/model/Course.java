@@ -33,6 +33,7 @@ public class Course {
     private Boolean isPremium;
     private String module;
     private String duration;
+    private String linkTelegram;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "course_category",

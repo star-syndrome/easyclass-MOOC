@@ -8,6 +8,7 @@ import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.OrderService;
+import org.binaracademy.finalproject.service.ResetPasswordService;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -32,6 +33,9 @@ public class UserServiceImplements implements UserService {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ResetPasswordService resetPasswordService;
 
     private UserResponse toUserResponse(Users users) {
         return UserResponse.builder()
@@ -85,6 +89,7 @@ public class UserServiceImplements implements UserService {
             Optional<Users> users = userRepository.findByUsername(user);
             Users users1 = users.get();
 
+            resetPasswordService.deleteByUsername(users1.getUsername());
             otpService.deleteByUsername(users1.getUsername());
             orderService.deleteByUsername(users1.getUsername());
             users1.getRoles().clear();
@@ -133,6 +138,7 @@ public class UserServiceImplements implements UserService {
             if (!Optional.ofNullable(users).isPresent()) {
                 log.info("User is not available");
             }
+            resetPasswordService.deleteByUsername(username);
             otpService.deleteByUsername(username);
             orderService.deleteByUsername(username);
             assert users != null;

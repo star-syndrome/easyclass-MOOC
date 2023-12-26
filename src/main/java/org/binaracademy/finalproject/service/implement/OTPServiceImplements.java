@@ -38,7 +38,7 @@ public class OTPServiceImplements implements OTPService {
         oneTimePassword.setExpiryDate(Instant.now().plusMillis(otpDurationMs));
         oneTimePassword.setOtp(RandomStringUtils.randomNumeric(6));
 
-        oneTimePassword = oneTimePasswordRepository.save(oneTimePassword);
+        oneTimePasswordRepository.save(oneTimePassword);
         return oneTimePassword;
     }
 

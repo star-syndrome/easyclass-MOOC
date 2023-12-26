@@ -24,4 +24,6 @@ public interface CourseService {
     List<GetAllCourseAdminResponse> getAllCourseAdmin();
 
     CourseResponse getCourse(String code);
+
+    CourseResponse getCourseAfterOrder();
 }
