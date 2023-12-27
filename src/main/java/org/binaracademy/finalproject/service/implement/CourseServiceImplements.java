@@ -35,6 +35,7 @@ public class CourseServiceImplements implements CourseService {
     private CourseResponse toCourseResponse(Course course) {
         return CourseResponse.builder()
                 .title(course.getTitleCourse())
+                .about(course.getAboutCourse())
                 .categories(course.getCategories())
                 .code(course.getCodeCourse())
                 .level(course.getLevelCourse())
@@ -203,6 +204,7 @@ public class CourseServiceImplements implements CourseService {
         return courseRepository.findByCodeCourse(code)
                 .map(course -> CourseResponse.builder()
                         .title(course.getTitleCourse())
+                        .about(course.getAboutCourse())
                         .price(course.getPriceCourse())
                         .level(course.getLevelCourse())
                         .code(course.getCodeCourse())
@@ -225,6 +227,7 @@ public class CourseServiceImplements implements CourseService {
         return courseRepository.getCourse(user.getId()).stream()
                 .map(courseResponse -> CourseResponse.builder()
                         .title(courseResponse.get().getTitleCourse())
+                        .about(courseResponse.get().getAboutCourse())
                         .price(courseResponse.get().getPriceCourse())
                         .level(courseResponse.get().getLevelCourse())
                         .code(courseResponse.get().getCodeCourse())
