@@ -30,12 +30,10 @@ public class CourseServiceImplements implements CourseService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
-
     private CourseResponse toCourseResponse(Course course) {
         return CourseResponse.builder()
                 .title(course.getTitleCourse())
+                .about(course.getAboutCourse())
                 .categories(course.getCategories())
                 .code(course.getCodeCourse())
                 .level(course.getLevelCourse())
@@ -204,6 +202,7 @@ public class CourseServiceImplements implements CourseService {
         return courseRepository.findByCodeCourse(code)
                 .map(course -> CourseResponse.builder()
                         .title(course.getTitleCourse())
+                        .about(course.getAboutCourse())
                         .price(course.getPriceCourse())
                         .level(course.getLevelCourse())
                         .code(course.getCodeCourse())
@@ -225,6 +224,7 @@ public class CourseServiceImplements implements CourseService {
 
         return courseRepository.getCourse(user.getId())
                 .map(courseResponse -> CourseResponse.builder()
+                        .about(courseResponse.getAboutCourse())
                         .title(courseResponse.getTitleCourse())
                         .price(courseResponse.getPriceCourse())
                         .level(courseResponse.getLevelCourse())

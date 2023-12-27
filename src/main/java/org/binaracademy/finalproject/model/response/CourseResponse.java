@@ -15,6 +15,7 @@ import java.util.Set;
 public class CourseResponse {
 
     private String title;
+    private String about;
     private String code;
     private Double price;
     private String level;
