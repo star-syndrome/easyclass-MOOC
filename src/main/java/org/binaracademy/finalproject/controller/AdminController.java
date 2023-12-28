@@ -121,7 +121,7 @@ public class AdminController {
     }
 
     @GetMapping(value = "/category/get", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getCategory() {
+    public ResponseEntity<Object> getRoleCategory() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
                     "Success get all category", service.getCategory());

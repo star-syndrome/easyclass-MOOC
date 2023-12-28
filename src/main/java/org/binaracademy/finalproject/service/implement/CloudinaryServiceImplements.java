@@ -36,9 +36,9 @@ public class CloudinaryServiceImplements implements CloudinaryService {
                     ObjectUtils.emptyMap());
             String imageURL = uploadResult.get("url").toString();
 
-            Users getLinkPhoto = users.get();
-            getLinkPhoto.setLinkPhoto(imageURL);
-            userRepository.save(getLinkPhoto);
+            Users user = users.get();
+            user.setLinkPhoto(imageURL);
+            userRepository.save(user);
 
             return MessageResponse.builder()
                     .message(imageURL)

@@ -143,9 +143,11 @@ public class CourseServiceImplements implements CourseService {
         log.info("Getting course detail information from course " + titleCourse);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Users> users = userRepository.findByUsername(username);
+        Optional<Course> course = courseRepository.findByTitleCourse(titleCourse);
         Users user = users.get();
+        Course course1 = course.get();
 
-        Boolean hasOrder = courseRepository.hasOrder(user.getId());
+        Boolean hasOrder = courseRepository.hasOrder(user.getId(), course1.getId());
         return courseRepository.findByTitleCourse(titleCourse)
                 .map(courses -> CourseDTO.builder()
                         .addCourseResponse(AddCourseResponse.builder()

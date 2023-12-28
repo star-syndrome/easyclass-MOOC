@@ -24,6 +24,6 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId")
     List<Optional<Course>> getCourse(@Param("userId") Long id);
 
-    @Query(nativeQuery = true, value = "select count(*) > 0 from orders o where o.user_id = :userId")
-    Boolean hasOrder(@Param("userId") Long id);
+    @Query(nativeQuery = true, value = "select count(*) > 0 from orders o where o.user_id = :userId and o.course_id = :courseId")
+    Boolean hasOrder(@Param("userId") Long id, @Param("courseId") String courseId);
 }

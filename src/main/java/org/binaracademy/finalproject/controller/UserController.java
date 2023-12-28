@@ -33,8 +33,7 @@ public class UserController {
     public ResponseEntity<Object> getUserLogin(){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get user!",
-                    userService.getUser());
+                    "Success get user!", userService.getUser());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }

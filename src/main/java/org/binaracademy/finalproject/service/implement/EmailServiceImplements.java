@@ -63,7 +63,7 @@ public class EmailServiceImplements implements EmailService {
             message.setText(emailRequest.getContent());
             //send message
             Transport.send(message);
-            log.info("message sent successfully to {}", emailRequest.getRecipient());
+            log.info("Message sent successfully to {}", emailRequest.getRecipient());
         } catch (MessagingException e) {throw new RuntimeException(e);}
     }
 }

@@ -25,8 +25,7 @@ public class CourseController {
     public ResponseEntity<Object> getAllCourse() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all course",
-                    courseService.getAllCourse());
+                    "Success get all course", courseService.getAllCourse());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }

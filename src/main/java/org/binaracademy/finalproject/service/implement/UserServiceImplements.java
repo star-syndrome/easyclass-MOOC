@@ -152,7 +152,7 @@ public class UserServiceImplements implements UserService {
             assert users != null;
             users.getRoles().clear();
             userRepository.deleteUserFromUsername(username);
-            log.info("Successfully deleted user!");
+            log.info("Successfully deleted user {}!", username);
         } catch (Exception e) {
             log.error("Deleting user failed, please try again!");
             throw e;

@@ -22,7 +22,7 @@ public class OrderController {
     public ResponseEntity<Object> getOrder(@RequestParam String title) {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success", orderService.getDataOrder(title));
+                    "Success getting data course for order!", orderService.getDataOrder(title));
         } catch (RuntimeException rte) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     rte.getMessage(), null);
@@ -47,7 +47,7 @@ public class OrderController {
     public ResponseEntity<Object> getOrderTransactions() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success getting order transaction", orderService.getOrderTransactions());
+                    "Success getting order transactions!", orderService.getOrderTransactions());
         } catch (RuntimeException rte) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     rte.getMessage(), null);

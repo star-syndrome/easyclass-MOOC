@@ -78,7 +78,6 @@ public class OrderServiceImplements implements OrderService {
                         .message("User already ordered this course!")
                         .build();
             }
-
             Order order = new Order();
             order.setPaymentMethod(createOrderRequest.getPaymentMethod());
             order.setOrderTime(new Date());
@@ -91,8 +90,8 @@ public class OrderServiceImplements implements OrderService {
             emailService.sendEmail(EmailRequest.builder()
                     .recipient(user.getEmail())
                     .subject("E-receipt easyclass")
-                    .content("This is your receipt!" + "\nCourse: " + order.getCourse().getTitleCourse() + "\nPayment: " + order.getPaymentMethod()
-                            + "\nOrder Time: " + order.getOrderTime() + "\nOrder Id: " + order.getId() + "\nThank you!")
+                    .content("This is your receipt!" + "\nUsername: " + order.getUsers().getUsername() +"\nCourse: " + order.getCourse().getTitleCourse() +
+                            "\nPayment: " + order.getPaymentMethod() + "\nPaid: " + order.getPaid() + "\nOrder Time: " + order.getOrderTime() + "\nOrder Id: " + order.getId() + "\nThank you!")
                     .build());
 
             log.info("Create order successfully");
