@@ -71,9 +71,8 @@ public class OrderServiceImplements implements OrderService {
             Users user = users.get();
             Course courses = course.get();
 
-            Boolean existsByUser = orderRepository.existsByUsers(user);
-            Boolean existsByCourse = orderRepository.existsByCourse(courses);
-            if (Boolean.TRUE.equals(existsByUser) && Boolean.TRUE.equals(existsByCourse)) {
+            Boolean orderValidation = orderRepository.orderValidation(user.getId(), courses.getId());
+            if (Boolean.TRUE.equals(orderValidation)) {
                 return MessageResponse.builder()
                         .message("User already ordered this course!")
                         .build();
