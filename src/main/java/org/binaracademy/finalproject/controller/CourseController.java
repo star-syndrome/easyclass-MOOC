@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @CrossOrigin("*")
@@ -24,8 +25,7 @@ public class CourseController {
     public ResponseEntity<Object> getAllCourse(){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all course",
-                    courseService.getAllCourse());
+                    "Success get all course", courseService.getAllCourse());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -64,7 +64,7 @@ public class CourseController {
 
     @GetMapping(value = "/getCourseOrder", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getCourseOrder() {
-        CourseResponse courseResponse = courseService.getCourseAfterOrder();
+        List<CourseResponse> courseResponse = courseService.getCourseAfterOrder();
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,

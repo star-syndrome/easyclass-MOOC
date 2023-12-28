@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,8 +22,8 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     void deleteByCode(@Param("codeCourse") String codeCourse);
 
     @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId")
-    Optional<Course> getCourse(@Param("userId") Long id);
+    List<Optional<Course>> getCourse(@Param("userId") Long id);
 
-    @Query(nativeQuery = true, value = "select count(*) > 0 from orders o where o.user_id = :userId")
-    Boolean hasOrder(@Param("userId") Long id);
+    @Query(nativeQuery = true, value = "select count(*) > 0 from orders o where o.user_id = :userId and o.course_id = :courseId")
+    Boolean hasOrder(@Param("userId") Long id, @Param("courseId") String courseId);
 }

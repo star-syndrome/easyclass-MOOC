@@ -27,7 +27,6 @@ public class Order {
     private Date orderTime;
 
     private Boolean paid;
-
     private String paymentMethod;
 
     @ManyToOne

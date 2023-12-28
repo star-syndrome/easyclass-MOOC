@@ -7,7 +7,6 @@ import org.binaracademy.finalproject.model.response.*;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.repository.CourseRepository;
-import org.binaracademy.finalproject.repository.OrderRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,8 +141,11 @@ public class CourseServiceImplements implements CourseService {
         log.info("Getting course detail information from course " + titleCourse);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Users> users = userRepository.findByUsername(username);
+        Optional<Course> course = courseRepository.findByTitleCourse(titleCourse);
         Users user = users.get();
-        Boolean hasOrder = courseRepository.hasOrder(user.getId());
+        Course course1 = course.get();
+
+        Boolean hasOrder = courseRepository.hasOrder(user.getId(), course1.getId());
         return courseRepository.findByTitleCourse(titleCourse)
                 .map(courses -> CourseDTO.builder()
                         .addCourseResponse(AddCourseResponse.builder()
@@ -217,24 +219,24 @@ public class CourseServiceImplements implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public CourseResponse getCourseAfterOrder() {
+    public List<CourseResponse> getCourseAfterOrder() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Users> users = userRepository.findByUsername(username);
         Users user = users.get();
 
-        return courseRepository.getCourse(user.getId())
+        return courseRepository.getCourse(user.getId()).stream()
                 .map(courseResponse -> CourseResponse.builder()
-                        .about(courseResponse.getAboutCourse())
-                        .title(courseResponse.getTitleCourse())
-                        .price(courseResponse.getPriceCourse())
-                        .level(courseResponse.getLevelCourse())
-                        .code(courseResponse.getCodeCourse())
-                        .isPremium(courseResponse.getIsPremium())
-                        .module(courseResponse.getModule())
-                        .duration(courseResponse.getDuration())
-                        .teacher(courseResponse.getTeacher())
-                        .categories(courseResponse.getCategories())
+                        .about(courseResponse.get().getAboutCourse())
+                        .title(courseResponse.get().getTitleCourse())
+                        .price(courseResponse.get().getPriceCourse())
+                        .level(courseResponse.get().getLevelCourse())
+                        .code(courseResponse.get().getCodeCourse())
+                        .isPremium(courseResponse.get().getIsPremium())
+                        .module(courseResponse.get().getModule())
+                        .duration(courseResponse.get().getDuration())
+                        .teacher(courseResponse.get().getTeacher())
+                        .categories(courseResponse.get().getCategories())
                         .build())
-                .orElse(null);
+                .collect(Collectors.toList());
     }
 }

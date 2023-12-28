@@ -40,9 +40,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("/**", "/api/auth/**", "/api/course/get", "/api/course/getAll", "/api/course/detailsFromTitle",
-                        "/api/user/**", "/api/course/getCourseOrder", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
+                        "/api/course/getCourseOrder", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", "/error").permitAll()
                 .antMatchers("/api/admin/**").hasAuthority(ERole.ROLE_ADMIN.name())
-                .antMatchers("/api/order/**").hasAuthority(ERole.ROLE_USER.name())
+                .antMatchers("/api/order/**", "/api/user/**").hasAuthority(ERole.ROLE_USER.name())
                 .anyRequest()
                 .authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

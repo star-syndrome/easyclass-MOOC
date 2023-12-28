@@ -25,5 +25,5 @@ public interface CourseService {
 
     CourseResponse getCourse(String code);
 
-    CourseResponse getCourseAfterOrder();
+    List<CourseResponse> getCourseAfterOrder();
 }

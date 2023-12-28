@@ -74,12 +74,14 @@ public class UserServiceImplements implements UserService {
             String username = getAuth();
             Optional<Users> users = Optional.ofNullable(userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found")));
+
             Users users1 = users.get();
             users1.setPhoneNumber(updateUsers.getPhoneNumber() == null ? users1.getPhoneNumber() : updateUsers.getPhoneNumber());
             users1.setCountry(updateUsers.getCountry() == null ? users1.getCountry() : updateUsers.getCountry());
             users1.setCity(updateUsers.getCity() == null ? users1.getCity() : updateUsers.getCity());
             userRepository.save(users1);
             log.info("Updating user successful!");
+
             return toUserResponse(users1);
         } catch (Exception e) {
             log.error("Update user failed");
@@ -150,7 +152,7 @@ public class UserServiceImplements implements UserService {
             assert users != null;
             users.getRoles().clear();
             userRepository.deleteUserFromUsername(username);
-            log.info("Successfully deleted user!");
+            log.info("Successfully deleted user {}!", username);
         } catch (Exception e) {
             log.error("Deleting user failed, please try again!");
             throw e;
@@ -172,7 +174,7 @@ public class UserServiceImplements implements UserService {
         }
         users1.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(users1);
-        log.info("Successfully change password!");
+        log.info("Successfully changed password!");
     }
 
     private String getAuth() {

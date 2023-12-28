@@ -87,8 +87,7 @@ public class AdminController {
     public ResponseEntity<Object> addSubject(@RequestBody Subject subject){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Add new subject successful",
-                    subjectService.addSubject(subject));
+                    "Add new subject successful", subjectService.addSubject(subject));
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -125,7 +124,7 @@ public class AdminController {
     }
 
     @GetMapping(value = "/category/get", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getCategory() {
+    public ResponseEntity<Object> getRoleCategory() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
                     "Success get all category",
@@ -150,8 +149,7 @@ public class AdminController {
     public ResponseEntity<Object> getAllCourse(){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all users!",
-                    userService.getAllUser());
+                    "Success get all users!", userService.getAllUser());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -162,8 +160,7 @@ public class AdminController {
     public ResponseEntity<Object> getCourseAdmin() {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get all courses!",
-                    courseService.getAllCourseAdmin());
+                    "Success get all courses!", courseService.getAllCourseAdmin());
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }
@@ -184,8 +181,7 @@ public class AdminController {
     public ResponseEntity<Object> getAllSubject(@RequestParam String code){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success getting subject",
-                    subjectService.getSubject(code));
+                    "Success getting subject", subjectService.getSubject(code));
         } catch (RuntimeException rte) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     rte.getMessage(), null);
