@@ -19,6 +19,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Modifying
     void deleteByUsers(Users users);
 
-    @Query(nativeQuery = true, value = "select * from orders o where o.user_id = :userId and o.course_id = :courseId")
+    @Query(nativeQuery = true, value = "select count(*) > 0 from orders o where o.user_id = :userId and o.course_id = :courseId")
     Boolean orderValidation(@Param("userId") Long id, @Param("courseId") String courseId);
 }
