@@ -68,7 +68,22 @@ public class CourseController {
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
-                        "Success get course", courseService.getCourseAfterOrder());
+                        "Success get course1!", courseService.getCourseAfterOrder());
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/searchingCourse", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> searchingCourse(@RequestParam String title) {
+        List<CourseResponse> courseResponse = courseService.searchingCourse(title);
+        try {
+            if (Objects.nonNull(courseResponse)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Searching course by title success!", courseService.searchingCourse(title));
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);

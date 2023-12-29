@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.service.implement;
 
 import lombok.extern.slf4j.Slf4j;
+import org.binaracademy.finalproject.model.Order;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
 import org.binaracademy.finalproject.model.response.*;
@@ -14,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -236,6 +239,26 @@ public class CourseServiceImplements implements CourseService {
                         .duration(courseResponse.get().getDuration())
                         .teacher(courseResponse.get().getTeacher())
                         .categories(courseResponse.get().getCategories())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> searchingCourse(String title) {
+        log.info("Searching course by title!");
+        return courseRepository.searchingCourse(title).stream()
+                .map(course -> CourseResponse.builder()
+                        .title(course.getTitleCourse())
+                        .about(course.getAboutCourse())
+                        .price(course.getPriceCourse())
+                        .level(course.getLevelCourse())
+                        .code(course.getCodeCourse())
+                        .isPremium(course.getIsPremium())
+                        .module(course.getModule())
+                        .duration(course.getDuration())
+                        .teacher(course.getTeacher())
+                        .categories(course.getCategories())
                         .build())
                 .collect(Collectors.toList());
     }

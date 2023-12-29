@@ -26,4 +26,6 @@ public interface CourseService {
     CourseResponse getCourse(String code);
 
     List<CourseResponse> getCourseAfterOrder();
+
+    List<CourseResponse> searchingCourse(String title);
 }
