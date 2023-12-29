@@ -29,4 +29,13 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Query(nativeQuery = true, value = "select * from course c where c.title_course like %:title%")
     List<Course> searchingCourse(@Param("title") String title);
+
+    @Query(nativeQuery = true, value = "select c.* from course c join course_category cc on cc.course_id = c.id where cc.category_id = 1")
+    List<Course> filterBackEnd();
+
+    @Query(nativeQuery = true, value = "select c.* from course c join course_category cc on cc.course_id = c.id where cc.category_id = 2")
+    List<Course> filterFrontEnd();
+
+    @Query(nativeQuery = true, value = "select c.* from course c join course_category cc on cc.course_id = c.id where cc.category_id = 3")
+    List<Course> filterFullStack();
 }

@@ -28,4 +28,10 @@ public interface CourseService {
     List<CourseResponse> getCourseAfterOrder();
 
     List<CourseResponse> searchingCourse(String title);
+
+    List<CourseResponse> filterBackEnd();
+
+    List<CourseResponse> filterFrontEnd();
+
+    List<CourseResponse> filterFullStack();
 }
