@@ -140,7 +140,7 @@ public class AuthServiceImplements implements AuthService {
 
     @Override
     public MessageResponse sendToken(String username) {
-        log.info("Trying send token to user " + " for reset password");
+        log.info("Trying send token to " + username + " for reset password");
         Users users = usersRepository.findByUsername(username).get();
         ResetPassword resetPassword = resetPasswordService.createToken(username);
 

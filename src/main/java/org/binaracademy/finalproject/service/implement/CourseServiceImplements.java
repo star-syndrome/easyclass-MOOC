@@ -241,4 +241,24 @@ public class CourseServiceImplements implements CourseService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public List<CourseResponse> searchingCourse(String title) {
+        log.info("Searching course by title!");
+        return courseRepository.searchingCourse(title).stream()
+                .map(course -> CourseResponse.builder()
+                        .title(course.getTitleCourse())
+                        .about(course.getAboutCourse())
+                        .price(course.getPriceCourse())
+                        .level(course.getLevelCourse())
+                        .code(course.getCodeCourse())
+                        .isPremium(course.getIsPremium())
+                        .module(course.getModule())
+                        .duration(course.getDuration())
+                        .teacher(course.getTeacher())
+                        .categories(course.getCategories())
+                        .build())
+                .collect(Collectors.toList());
+    }
 }
