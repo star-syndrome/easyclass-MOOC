@@ -91,4 +91,49 @@ public class CourseController {
             return ResponseController.internalServerError(e.getMessage());
         }
     }
+
+    @GetMapping(value = "/filterBackEnd", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filterBackend() {
+        List<CourseResponse> courseResponse = courseService.filterBackEnd();
+        try {
+            if (Objects.nonNull(courseResponse)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Filter Back End Success!", courseService.filterBackEnd());
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/filterFrontEnd", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filterFrontend() {
+        List<CourseResponse> courseResponse = courseService.filterFrontEnd();
+        try {
+            if (Objects.nonNull(courseResponse)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Filter Front End Success!", courseService.filterFrontEnd());
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/filterFullStack", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filterFullStack() {
+        List<CourseResponse> courseResponse = courseService.filterFullStack();
+        try {
+            if (Objects.nonNull(courseResponse)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Filter Full Stack Success!", courseService.filterFullStack());
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
 }

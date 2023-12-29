@@ -205,18 +205,7 @@ public class CourseServiceImplements implements CourseService {
     public CourseResponse getCourse(String code) {
         log.info("Success getting course where course code: {}", code);
         return courseRepository.findByCodeCourse(code)
-                .map(course -> CourseResponse.builder()
-                        .title(course.getTitleCourse())
-                        .about(course.getAboutCourse())
-                        .price(course.getPriceCourse())
-                        .level(course.getLevelCourse())
-                        .code(course.getCodeCourse())
-                        .isPremium(course.getIsPremium())
-                        .module(course.getModule())
-                        .duration(course.getDuration())
-                        .teacher(course.getTeacher())
-                        .categories(course.getCategories())
-                        .build())
+                .map(this::toCourseResponse)
                 .orElse(null);
     }
 
@@ -248,18 +237,34 @@ public class CourseServiceImplements implements CourseService {
     public List<CourseResponse> searchingCourse(String title) {
         log.info("Searching course by title!");
         return courseRepository.searchingCourse(title).stream()
-                .map(course -> CourseResponse.builder()
-                        .title(course.getTitleCourse())
-                        .about(course.getAboutCourse())
-                        .price(course.getPriceCourse())
-                        .level(course.getLevelCourse())
-                        .code(course.getCodeCourse())
-                        .isPremium(course.getIsPremium())
-                        .module(course.getModule())
-                        .duration(course.getDuration())
-                        .teacher(course.getTeacher())
-                        .categories(course.getCategories())
-                        .build())
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterBackEnd() {
+        log.info("Filtering Back End Course!");
+        return courseRepository.filterBackEnd().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterFrontEnd() {
+        log.info("Filtering Front End Course!");
+        return courseRepository.filterFrontEnd().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterFullStack() {
+        log.info("Filtering Back End Course!");
+        return courseRepository.filterFullStack().stream()
+                .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }
 }
