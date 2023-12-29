@@ -5,6 +5,7 @@ import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -129,6 +130,21 @@ public class CourseController {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
                         "Filter Full Stack Success!", courseService.filterFullStack());
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/{page}")
+    public ResponseEntity<Object> getAllCourseWithPagination(@PathVariable int page){
+        Page<CourseResponse> courseResponse = courseService.getAllCoursePagination(page);
+        try {
+            if (Objects.nonNull(courseResponse)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Get all course with pagination success!", courseService.getAllCoursePagination(page));
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);

@@ -6,6 +6,7 @@ import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.response.AddCourseResponse;
 import org.binaracademy.finalproject.model.response.GetAllCourseAdminResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -34,4 +35,6 @@ public interface CourseService {
     List<CourseResponse> filterFrontEnd();
 
     List<CourseResponse> filterFullStack();
+
+    Page<CourseResponse> getAllCoursePagination(int page);
 }
