@@ -200,6 +200,7 @@ public class CourseServiceImplements implements CourseService {
                         .isPremium(course.getIsPremium())
                         .module(course.getModule())
                         .duration(course.getDuration())
+                        .linkTelegram(course.getLinkTelegram())
                         .build())
                 .collect(Collectors.toList());
     }

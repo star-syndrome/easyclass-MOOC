@@ -25,4 +25,5 @@ public class GetAllCourseAdminResponse {
     private Set<Category> categorySet;
     private String module;
     private String duration;
+    private String linkTelegram;
 }
