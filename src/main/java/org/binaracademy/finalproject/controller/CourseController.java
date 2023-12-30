@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.controller;
 
 import org.binaracademy.finalproject.model.response.CourseResponse;
+import org.binaracademy.finalproject.model.response.CourseResponseTele;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.service.CourseService;
@@ -49,7 +50,7 @@ public class CourseController {
 
     @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getCourse(@RequestParam String code) {
-        CourseResponse courseResponse = courseService.getCourse(code);
+        CourseResponseTele courseResponse = courseService.getCourse(code);
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
