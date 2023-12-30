@@ -5,6 +5,7 @@ import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.response.AddCourseResponse;
+import org.binaracademy.finalproject.model.response.CourseResponseTele;
 import org.binaracademy.finalproject.model.response.GetAllCourseAdminResponse;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public interface CourseService {
 
     List<GetAllCourseAdminResponse> getAllCourseAdmin();
 
-    CourseResponse getCourse(String code);
+    CourseResponseTele getCourse(String code);
 
     List<CourseResponse> getCourseAfterOrder();
 

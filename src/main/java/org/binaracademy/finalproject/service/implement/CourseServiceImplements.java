@@ -3,12 +3,9 @@ package org.binaracademy.finalproject.service.implement;
 import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
-import org.binaracademy.finalproject.model.response.CourseResponse;
+import org.binaracademy.finalproject.model.response.*;
 import org.binaracademy.finalproject.DTO.CourseDTO;
-import org.binaracademy.finalproject.model.response.GetAllCourseAdminResponse;
-import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Course;
-import org.binaracademy.finalproject.model.response.AddCourseResponse;
 import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.CourseService;
@@ -207,10 +204,22 @@ public class CourseServiceImplements implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public CourseResponse getCourse(String code) {
+    public CourseResponseTele getCourse(String code) {
         log.info("Success getting course where course code: {}", code);
         return courseRepository.findByCodeCourse(code)
-                .map(this::toCourseResponse)
+                .map(course -> CourseResponseTele.builder()
+                        .about(course.getAboutCourse())
+                        .title(course.getTitleCourse())
+                        .code(course.getCodeCourse())
+                        .isPremium(course.getIsPremium())
+                        .linkTelegram(course.getLinkTelegram())
+                        .price(course.getPriceCourse())
+                        .level(course.getLevelCourse())
+                        .teacher(course.getTeacher())
+                        .categories(course.getCategories())
+                        .module(course.getModule())
+                        .duration(course.getDuration())
+                        .build())
                 .orElse(null);
     }
 
