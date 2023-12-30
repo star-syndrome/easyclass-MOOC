@@ -137,6 +137,11 @@ public class OrderServiceImplements implements OrderService {
         orderRepository.deleteByUsers(userRepository.getUserByUsername(username).get());
     }
 
+    @Override
+    public void deleteByCodeCourse(String codeCourse) {
+        orderRepository.deleteByCourse(courseRepository.getCourseByCodeCourse(codeCourse).get());
+    }
+
     private OrderResponse getOrderResponse(Order order) {
         return OrderResponse.builder()
                 .userId(order.getUsers().getId())

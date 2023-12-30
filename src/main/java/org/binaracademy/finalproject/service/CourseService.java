@@ -37,4 +37,22 @@ public interface CourseService {
     List<CourseResponse> filterFullStack();
 
     Page<CourseResponse> getAllCoursePagination(int page);
+
+    List<CourseResponse> filterAdvanced();
+
+    List<CourseResponse> filterBeginner();
+
+    List<CourseResponse> filterIntermediate();
+
+    List<CourseResponse> filterCoursePremium();
+
+    List<CourseResponse> filterCourseFree();
+
+    List<CourseResponse> searchingCourseAfterOrder(String title);
+
+    List<CourseResponse> filterAdvancedAfterOrder();
+
+    List<CourseResponse> filterIntermediateAfterOrder();
+
+    List<CourseResponse> filterBeginnerAfterOrder();
 }
