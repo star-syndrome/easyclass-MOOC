@@ -19,4 +19,6 @@ public interface OrderService {
     List<OrderResponse> getAllOrder();
 
     void deleteByUsername(String username);
+
+    void deleteByCodeCourse(String codeCourse);
 }

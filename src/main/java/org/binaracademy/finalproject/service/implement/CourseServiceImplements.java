@@ -12,6 +12,7 @@ import org.binaracademy.finalproject.model.response.AddCourseResponse;
 import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.CourseService;
+import org.binaracademy.finalproject.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class CourseServiceImplements implements CourseService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrderService orderService;
 
     private CourseResponse toCourseResponse(Course course) {
         return CourseResponse.builder()
@@ -59,6 +63,7 @@ public class CourseServiceImplements implements CourseService {
                 .teacher(course.getTeacher())
                 .module(course.getModule())
                 .duration(course.getDuration())
+                .linkTelegram(course.getLinkTelegram())
                 .build();
     }
 
@@ -126,7 +131,7 @@ public class CourseServiceImplements implements CourseService {
                 log.info("Course is not available");
             }
             assert course != null;
-            course.getOrders().clear();
+            orderService.deleteByCodeCourse(codeCourse);
             course.getCategories().clear();
             course.getSubjects().clear();
             log.info("Deleting the course with course code: {} successful!", codeCourse);
@@ -161,7 +166,7 @@ public class CourseServiceImplements implements CourseService {
                                 .categories(courses.getCategories())
                                 .module(courses.getModule())
                                 .duration(courses.getDuration())
-                                .linkTelegram(hasOrder ? courses.getLinkTelegram() : null)
+                                .linkTelegram(!courses.getIsPremium() ? courses.getLinkTelegram() : hasOrder ? courses.getLinkTelegram() : null)
                                 .build())
                         .subjectResponse(courses.getSubjects().stream()
                                 .map(subject -> {
@@ -216,18 +221,7 @@ public class CourseServiceImplements implements CourseService {
         Users user = users.get();
 
         return courseRepository.getCourse(user.getId()).stream()
-                .map(courseResponse -> CourseResponse.builder()
-                        .title(courseResponse.get().getTitleCourse())
-                        .about(courseResponse.get().getAboutCourse())
-                        .price(courseResponse.get().getPriceCourse())
-                        .level(courseResponse.get().getLevelCourse())
-                        .code(courseResponse.get().getCodeCourse())
-                        .isPremium(courseResponse.get().getIsPremium())
-                        .module(courseResponse.get().getModule())
-                        .duration(courseResponse.get().getDuration())
-                        .teacher(courseResponse.get().getTeacher())
-                        .categories(courseResponse.get().getCategories())
-                        .build())
+                .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }
 
@@ -263,6 +257,103 @@ public class CourseServiceImplements implements CourseService {
     public List<CourseResponse> filterFullStack() {
         log.info("Filtering Back End Course!");
         return courseRepository.filterFullStack().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterAdvanced() {
+        log.info("Filtering Advanced Level!");
+        return courseRepository.filterAdvanced().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterBeginner() {
+        log.info("Filtering Beginner Level!");
+        return courseRepository.filterBeginner().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterIntermediate() {
+        log.info("Filtering Intermediate Level!");
+        return courseRepository.filterIntermediate().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterCoursePremium() {
+        log.info("Filtering Course Premium!");
+        return courseRepository.filterCoursePremium().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterCourseFree() {
+        log.info("Filtering Course Free!");
+        return courseRepository.filterCourseFree().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> searchingCourseAfterOrder(String title) {
+        log.info("Searching Course After Order!");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users user = users.get();
+
+        return courseRepository.searchingCourseAfterOrder(user.getId(), title).stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterAdvancedAfterOrder() {
+        log.info("Filtering Advanced level After Order");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users user = users.get();
+
+        return courseRepository.filterAdvancedAfterOrder(user.getId()).stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterIntermediateAfterOrder() {
+        log.info("Filtering Intermediate level After Order");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users user = users.get();
+
+        return courseRepository.filterIntermediateAfterOrder(user.getId()).stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseResponse> filterBeginnerAfterOrder() {
+        log.info("Filtering Beginner level After Order");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Users user = users.get();
+
+        return courseRepository.filterBeginnerAfterOrder(user.getId()).stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }

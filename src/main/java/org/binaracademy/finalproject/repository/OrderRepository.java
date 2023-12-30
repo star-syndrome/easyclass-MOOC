@@ -12,12 +12,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, String> {
 
-    Boolean existsByUsers(Users users);
-
-    Boolean existsByCourse(Course course);
-
     @Modifying
     void deleteByUsers(Users users);
+
+    @Modifying
+    void deleteByCourse(Course course);
 
     @Query(nativeQuery = true, value = "select count(*) > 0 from orders o where o.user_id = :userId and o.course_id = :courseId")
     Boolean orderValidation(@Param("userId") Long id, @Param("courseId") String courseId);

@@ -17,12 +17,14 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     Optional<Course> findByTitleCourse(String titleCourse);
 
+    Optional<Course> getCourseByCodeCourse(String codeCourse);
+
     @Modifying
     @Query(nativeQuery = true, value = "delete from course where code_course = :codeCourse")
     void deleteByCode(@Param("codeCourse") String codeCourse);
 
     @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId")
-    List<Optional<Course>> getCourse(@Param("userId") Long id);
+    List<Course> getCourse(@Param("userId") Long id);
 
     @Query(nativeQuery = true, value = "select count(*) > 0 from orders o where o.user_id = :userId and o.course_id = :courseId")
     Boolean hasOrder(@Param("userId") Long id, @Param("courseId") String courseId);
@@ -38,4 +40,31 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Query(nativeQuery = true, value = "select c.* from course c join course_category cc on cc.course_id = c.id where cc.category_id = 3")
     List<Course> filterFullStack();
+
+    @Query(nativeQuery = true, value = "select * from course c where c.level_course = 'Advanced'")
+    List<Course> filterAdvanced();
+
+    @Query(nativeQuery = true, value = "select * from course c where c.level_course = 'Beginner'")
+    List<Course> filterBeginner();
+
+    @Query(nativeQuery = true, value = "select * from course c where c.level_course = 'Intermediate'")
+    List<Course> filterIntermediate();
+
+    @Query(nativeQuery = true, value = "select * from course c where c.is_premium = true")
+    List<Course> filterCoursePremium();
+
+    @Query(nativeQuery = true, value = "select * from course c where c.is_premium = false")
+    List<Course> filterCourseFree();
+
+    @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId and c.level_course = 'Advanced'")
+    List<Course> filterAdvancedAfterOrder(@Param("userId") Long userId);
+
+    @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId and c.level_course = 'Intermediate'")
+    List<Course> filterIntermediateAfterOrder(@Param("userId") Long userId);
+
+    @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId and c.level_course = 'Beginner'")
+    List<Course> filterBeginnerAfterOrder(@Param("userId") Long userId);
+
+    @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId and c.title_course like %:title%")
+    List<Course> searchingCourseAfterOrder(@Param("userId") Long userId, @Param("title") String title);
 }

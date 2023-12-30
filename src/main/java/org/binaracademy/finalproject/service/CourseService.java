@@ -34,4 +34,22 @@ public interface CourseService {
     List<CourseResponse> filterFrontEnd();
 
     List<CourseResponse> filterFullStack();
+
+    List<CourseResponse> filterAdvanced();
+
+    List<CourseResponse> filterBeginner();
+
+    List<CourseResponse> filterIntermediate();
+
+    List<CourseResponse> filterCoursePremium();
+
+    List<CourseResponse> filterCourseFree();
+
+    List<CourseResponse> searchingCourseAfterOrder(String title);
+
+    List<CourseResponse> filterAdvancedAfterOrder();
+
+    List<CourseResponse> filterIntermediateAfterOrder();
+
+    List<CourseResponse> filterBeginnerAfterOrder();
 }
