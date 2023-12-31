@@ -207,13 +207,6 @@ public class CourseServiceImplements implements CourseService {
     @Transactional(readOnly = true)
     public CourseResponseTele getCourse(String code) {
         log.info("Success getting course where course code: {}", code);
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Users> users = userRepository.findByUsername(username);
-        Optional<Course> course = courseRepository.findByCodeCourse(code);
-        Users user = users.get();
-        Course course1 = course.get();
-
-        Boolean hasOrder = courseRepository.hasOrder(user.getId(), course1.getId());
         return courseRepository.findByCodeCourse(code)
                 .map(course2 -> CourseResponseTele.builder()
                         .about(course2.getAboutCourse())
@@ -226,7 +219,7 @@ public class CourseServiceImplements implements CourseService {
                         .isPremium(course2.getIsPremium())
                         .duration(course2.getDuration())
                         .module(course2.getModule())
-                        .link(!course2.getIsPremium() ? course2.getLinkTelegram() : hasOrder ? course2.getLinkTelegram() : null)
+                        .link(course2.getLinkTelegram())
                         .build())
                 .orElse(null);
     }
