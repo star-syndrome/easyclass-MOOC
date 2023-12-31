@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.controller;
 
 import org.binaracademy.finalproject.model.response.CourseResponse;
+import org.binaracademy.finalproject.model.response.CourseResponseTele;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.service.CourseService;
@@ -50,7 +51,7 @@ public class CourseController {
 
     @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getCourse(@RequestParam String code) {
-        CourseResponse courseResponse = courseService.getCourse(code);
+        CourseResponseTele courseResponse = courseService.getCourse(code);
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
@@ -243,13 +244,13 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/filterAdvancedAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> filteringAdvancedLevelAfterOrder() {
-        List<CourseResponse> courseResponse = courseService.filterAdvancedAfterOrder();
+    @GetMapping(value = "/filterBackendAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filteringBackendAfterOrder() {
+        List<CourseResponse> courseResponse = courseService.filteringBackendAfterOrder();
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
-                        "Filtering Advanced Level After Order Success!", courseService.filterAdvancedAfterOrder());
+                        "Filtering Backend After Order Success!", courseService.filteringBackendAfterOrder());
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);
@@ -258,13 +259,13 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/filterIntermediateAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> filteringIntermediateLevelAfterOrder() {
-        List<CourseResponse> courseResponse = courseService.filterIntermediateAfterOrder();
+    @GetMapping(value = "/filterFrontendAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filteringFrontendAfterOrder() {
+        List<CourseResponse> courseResponse = courseService.filteringFrontendAfterOrder();
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
-                        "Filtering Intermediate Level After Order Success!", courseService.filterIntermediateAfterOrder());
+                        "Filtering Frontend After Order Success!", courseService.filteringFrontendAfterOrder());
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);
@@ -273,13 +274,13 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/filterBeginnerAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> filteringBeginnerLevelAfterOrder() {
-        List<CourseResponse> courseResponse = courseService.filterBeginnerAfterOrder();
+    @GetMapping(value = "/filterFullstackAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filteringFullstackLevelAfterOrder() {
+        List<CourseResponse> courseResponse = courseService.filteringFullstackAfterOrder();
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
-                        "Filtering Beginner Level After Order Success!", courseService.filterBeginnerAfterOrder());
+                        "Filtering Fullstack After Order Success!", courseService.filteringFullstackAfterOrder());
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);

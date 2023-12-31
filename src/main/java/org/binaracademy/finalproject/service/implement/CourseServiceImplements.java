@@ -205,10 +205,29 @@ public class CourseServiceImplements implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public CourseResponse getCourse(String code) {
+    public CourseResponseTele getCourse(String code) {
         log.info("Success getting course where course code: {}", code);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> users = userRepository.findByUsername(username);
+        Optional<Course> course = courseRepository.findByCodeCourse(code);
+        Users user = users.get();
+        Course course1 = course.get();
+
+        Boolean hasOrder = courseRepository.hasOrder(user.getId(), course1.getId());
         return courseRepository.findByCodeCourse(code)
-                .map(this::toCourseResponse)
+                .map(course2 -> CourseResponseTele.builder()
+                        .about(course2.getAboutCourse())
+                        .title(course2.getTitleCourse())
+                        .code(course2.getCodeCourse())
+                        .level(course2.getLevelCourse())
+                        .price(course2.getPriceCourse())
+                        .teacher(course2.getTeacher())
+                        .categories(course2.getCategories())
+                        .isPremium(course2.getIsPremium())
+                        .duration(course2.getDuration())
+                        .module(course2.getModule())
+                        .link(!course2.getIsPremium() ? course2.getLinkTelegram() : hasOrder ? course2.getLinkTelegram() : null)
+                        .build())
                 .orElse(null);
     }
 
@@ -333,39 +352,39 @@ public class CourseServiceImplements implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CourseResponse> filterAdvancedAfterOrder() {
-        log.info("Filtering Advanced level After Order");
+    public List<CourseResponse> filteringBackendAfterOrder() {
+        log.info("Filtering Backend After Order");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Users> users = userRepository.findByUsername(username);
         Users user = users.get();
 
-        return courseRepository.filterAdvancedAfterOrder(user.getId()).stream()
+        return courseRepository.filterBackendAfterOrder(user.getId()).stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CourseResponse> filterIntermediateAfterOrder() {
-        log.info("Filtering Intermediate level After Order");
+    public List<CourseResponse> filteringFrontendAfterOrder() {
+        log.info("Filtering Frontend After Order");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Users> users = userRepository.findByUsername(username);
         Users user = users.get();
 
-        return courseRepository.filterIntermediateAfterOrder(user.getId()).stream()
+        return courseRepository.filterFrontendAfterOrder(user.getId()).stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CourseResponse> filterBeginnerAfterOrder() {
-        log.info("Filtering Beginner level After Order");
+    public List<CourseResponse> filteringFullstackAfterOrder() {
+        log.info("Filtering Fullstack After Order");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Users> users = userRepository.findByUsername(username);
         Users user = users.get();
 
-        return courseRepository.filterBeginnerAfterOrder(user.getId()).stream()
+        return courseRepository.filterFullstackAfterOrder(user.getId()).stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }

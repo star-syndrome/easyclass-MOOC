@@ -72,4 +72,13 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId and c.level_course = 'Beginner'")
     List<Course> filterBeginnerAfterOrder(@Param("userId") Long userId);
+
+    @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id join course_category cc on cc.course_id = c.id where o.user_id = :userId and cc.category_id = 1")
+    List<Course> filterBackendAfterOrder(@Param("userId") Long userId);
+
+    @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id join course_category cc on cc.course_id = c.id where o.user_id = :userId and cc.category_id = 2")
+    List<Course> filterFrontendAfterOrder(@Param("userId") Long userId);
+
+    @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id join course_category cc on cc.course_id = c.id where o.user_id = :userId and cc.category_id = 3")
+    List<Course> filterFullstackAfterOrder(@Param("userId") Long userId);
 }
