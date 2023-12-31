@@ -5,6 +5,7 @@ import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.Subject;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
 import org.binaracademy.finalproject.model.request.UpdateSubjectRequest;
+import org.binaracademy.finalproject.model.response.CourseResponseTele;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.service.CourseService;
 import org.binaracademy.finalproject.service.OrderService;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 
 @CrossOrigin("*")
@@ -171,7 +174,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping(value = "/subject/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/subject/getByCode", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getAllSubject(@RequestParam String code){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
@@ -206,6 +209,21 @@ public class AdminController {
         } catch (RuntimeException runtimeException) {
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     runtimeException.getMessage(), null);
+        } catch (Exception e) {
+            return ResponseController.internalServerError(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/course/getByCode", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getCourse(@RequestParam String code) {
+        CourseResponseTele courseResponse = courseService.getCourse(code);
+        try {
+            if (Objects.nonNull(courseResponse)) {
+                return ResponseController.statusResponse(HttpStatus.OK,
+                        "Success get course " + code, courseService.getCourse(code));
+            }
+            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
+                    "Course not found!", null);
         } catch (Exception e) {
             return ResponseController.internalServerError(e.getMessage());
         }

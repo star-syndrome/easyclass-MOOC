@@ -48,21 +48,6 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getCourse(@RequestParam String code) {
-        CourseResponseTele courseResponse = courseService.getCourse(code);
-        try {
-            if (Objects.nonNull(courseResponse)) {
-                return ResponseController.statusResponse(HttpStatus.OK,
-                        "Success get course " + code, courseService.getCourse(code));
-            }
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    "Course not found!", null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
-    }
-
     @GetMapping(value = "/getCourseOrder", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getCourseOrder() {
         List<CourseResponse> courseResponse = courseService.getCourseAfterOrder();
