@@ -228,13 +228,13 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/filterAdvancedAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> filteringAdvancedLevelAfterOrder() {
-        List<CourseResponse> courseResponse = courseService.filterAdvancedAfterOrder();
+    @GetMapping(value = "/filterBackendAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filteringBackendAfterOrder() {
+        List<CourseResponse> courseResponse = courseService.filterBackendAfterOrder();
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
-                        "Filtering Advanced Level After Order Success!", courseService.filterAdvancedAfterOrder());
+                        "Filtering Backend After Order Success!", courseService.filterBackendAfterOrder());
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);
@@ -243,13 +243,13 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/filterIntermediateAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> filteringIntermediateLevelAfterOrder() {
-        List<CourseResponse> courseResponse = courseService.filterIntermediateAfterOrder();
+    @GetMapping(value = "/filterFrontendAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filteringFrontendAfterOrder() {
+        List<CourseResponse> courseResponse = courseService.filterFrontendAfterOrder();
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
-                        "Filtering Intermediate Level After Order Success!", courseService.filterIntermediateAfterOrder());
+                        "Filtering Frontend After Order Success!", courseService.filterFrontendAfterOrder());
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);
@@ -258,13 +258,13 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/filterBeginnerAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> filteringBeginnerLevelAfterOrder() {
-        List<CourseResponse> courseResponse = courseService.filterBeginnerAfterOrder();
+    @GetMapping(value = "/filterFullstackAfterOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> filteringFullstackAfterOrder() {
+        List<CourseResponse> courseResponse = courseService.filterFullstackAfterOrder();
         try {
             if (Objects.nonNull(courseResponse)) {
                 return ResponseController.statusResponse(HttpStatus.OK,
-                        "Filtering Beginner Level After Order Success!", courseService.filterBeginnerAfterOrder());
+                        "Filtering Fullstack After Order Success!", courseService.filterFullstackAfterOrder());
             }
             return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
                     "Course not found!", null);

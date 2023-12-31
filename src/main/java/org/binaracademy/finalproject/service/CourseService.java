@@ -48,9 +48,9 @@ public interface CourseService {
 
     List<CourseResponse> searchingCourseAfterOrder(String title);
 
-    List<CourseResponse> filterAdvancedAfterOrder();
+    List<CourseResponse> filterBackendAfterOrder();
 
-    List<CourseResponse> filterIntermediateAfterOrder();
+    List<CourseResponse> filterFrontendAfterOrder();
 
-    List<CourseResponse> filterBeginnerAfterOrder();
+    List<CourseResponse> filterFullstackAfterOrder();
 }
