@@ -1,5 +1,6 @@
 package org.binaracademy.finalproject.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.model.OneTimePassword;
 import org.binaracademy.finalproject.model.ResetPassword;
@@ -49,19 +50,22 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/signin")
+    @PostMapping("/login")
+    @Operation(summary = "User login")
     public ResponseEntity<JwtResponseSignIn> authenticateUser(@Valid @RequestBody LoginRequest login) {
         return ResponseEntity.ok()
                 .body(authService.authenticateUser(login));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
+    @Operation(summary = "Register account for user")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         return ResponseEntity.ok()
                 .body(authService.registerUser(signupRequest));
     }
 
     @PostMapping("/otp")
+    @Operation(summary = "For verify OTP")
     public ResponseEntity<JwtResponseOTP> otpVerify(@Valid @RequestBody OTPRequest otpRequest) {
         String oneTimePassword = otpRequest.getOtp();
         return otpService.findByOtp(oneTimePassword)
@@ -96,6 +100,7 @@ public class AuthController {
     }
 
     @PostMapping("/sendToken")
+    @Operation(summary = "Send token for reset password")
     public ResponseEntity<Object> sendToken(@RequestParam String username) {
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
