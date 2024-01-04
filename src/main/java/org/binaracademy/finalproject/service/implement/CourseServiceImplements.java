@@ -11,6 +11,8 @@ import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.CourseService;
 import org.binaracademy.finalproject.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,6 +92,19 @@ public class CourseServiceImplements implements CourseService {
         return courseRepository.findAll().stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CourseResponse> getAllCoursePagination(int page) {
+        log.info("Trying to get all course with pagination");
+        try {
+            Page<Course> courses = courseRepository.getAllCourseWithPagination(PageRequest.of((page - 1), 6));
+            return courses.map(this::toCourseResponse);
+        } catch (Exception e) {
+            log.error("Error getting course with pagination");
+            throw e;
+        }
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.binaracademy.finalproject.repository;
 
 import org.binaracademy.finalproject.model.Course;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,6 +33,9 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Query(nativeQuery = true, value = "select * from course c where c.title_course like %:title%")
     List<Course> searchingCourse(@Param("title") String title);
+
+    @Query(nativeQuery = true, value = "select * from course")
+    Page<Course> getAllCourseWithPagination(Pageable pageable);
 
     @Query(nativeQuery = true, value = "select c.* from course c join course_category cc on cc.course_id = c.id where cc.category_id = 1")
     List<Course> filterBackEnd();

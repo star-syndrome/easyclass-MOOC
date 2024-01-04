@@ -7,6 +7,7 @@ import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.response.AddCourseResponse;
 import org.binaracademy.finalproject.model.response.CourseResponseTele;
 import org.binaracademy.finalproject.model.response.GetAllCourseAdminResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,6 +16,8 @@ public interface CourseService {
     AddCourseResponse addNewCourse (Course course);
 
     List<CourseResponse> getAllCourse();
+
+    Page<CourseResponse> getAllCoursePagination(int page);
 
     CourseResponse updateCourse(UpdateCourseRequest updateCourse, String code);
 
