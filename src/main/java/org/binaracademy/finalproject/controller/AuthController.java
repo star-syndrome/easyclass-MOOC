@@ -62,16 +62,26 @@ public class AuthController {
     }
 
     @PostMapping("/otp")
-    public ResponseEntity<JwtResponseOTP> otpVerify(@Valid @RequestBody OTPRequest otpRequest) {
-        String oneTimePassword = otpRequest.getOtp();
-        return otpService.findByOtp(oneTimePassword)
-                .map(otpService::verifyExpiration)
-                .map(OneTimePassword::getUsers)
-                .map(users -> {
-                    String jwt = jwtUtils.generateTokenFromUsername(users.getUsername());
-                    return ResponseEntity.ok(new JwtResponseOTP(jwt, users.getId(), users.getUsername(), users.getEmail()));
-                })
-                .orElseThrow(() -> new RuntimeException("OTP different! Please check your OTP correctly"));
+    public ResponseEntity<?> otpVerify(@Valid @RequestBody OTPRequest otpRequest) {
+        try {
+            String oneTimePassword = otpRequest.getOtp();
+            return otpService.findByOtp(oneTimePassword)
+                    .map(otpService::verifyExpiration)
+                    .map(OneTimePassword::getUsers)
+                    .map(users -> {
+                        String jwt = jwtUtils.generateTokenFromUsername(users.getUsername());
+                        return ResponseEntity.ok(new JwtResponseOTP(jwt, users.getId(), users.getUsername(), users.getEmail()));
+                    })
+                    .orElseThrow(() -> new RuntimeException("OTP different! Please check your OTP correctly"));
+        } catch (RuntimeException rte) {
+            return ResponseController.statusResponse(HttpStatus.BAD_REQUEST, rte.getMessage(), null);
+        }
+    }
+
+    @PostMapping("/refreshOTP")
+    public ResponseEntity<MessageResponse> refreshOTP(@RequestParam String email) {
+        return ResponseEntity.ok()
+                .body(authService.refreshOTP(email));
     }
 
     @PostMapping("/resetPassword")

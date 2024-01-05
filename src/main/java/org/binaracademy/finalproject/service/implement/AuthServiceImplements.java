@@ -153,4 +153,23 @@ public class AuthServiceImplements implements AuthService {
         log.info("Send token for reset password successfully!");
         return MessageResponse.builder().message("Success sending a token for reset password!").build();
     }
+
+    @Override
+    public MessageResponse refreshOTP(String email) {
+        Users users = usersRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
+        OneTimePassword otp = otpService.createOTP(users.getUsername());
+        try {
+            emailService.sendEmail(EmailRequest.builder()
+                    .subject("Refresh OTP For Easy Class")
+                    .recipient(users.getEmail())
+                    .content("Please input this OTP " + otp.getOtp() +
+                            " to verify your account for access Easy Class, thank you!")
+                    .build());
+        } catch (RuntimeException e) {
+            log.error("Unable to send OTP!");
+            throw e;
+        }
+        return MessageResponse.builder().message("Refresh OTP Success!").build();
+    }
 }
