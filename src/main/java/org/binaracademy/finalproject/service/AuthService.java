@@ -13,4 +13,6 @@ public interface AuthService {
     JwtResponseSignIn authenticateUser(LoginRequest login);
 
     MessageResponse sendToken(String username);
+
+    MessageResponse refreshOTP(String email);
 }
