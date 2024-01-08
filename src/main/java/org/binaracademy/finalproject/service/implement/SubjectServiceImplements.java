@@ -5,6 +5,7 @@ import org.binaracademy.finalproject.model.request.UpdateSubjectRequest;
 import org.binaracademy.finalproject.model.response.SubjectResponse;
 import org.binaracademy.finalproject.model.Subject;
 import org.binaracademy.finalproject.model.response.SubjectResponseAdmin;
+import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.repository.SubjectRepository;
 import org.binaracademy.finalproject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class SubjectServiceImplements implements SubjectService {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     private SubjectResponse toSubjectResponse(Subject subject) {
         return SubjectResponse.builder()
@@ -118,5 +122,10 @@ public class SubjectServiceImplements implements SubjectService {
             log.error("Deleting subject failed, please try again!");
             throw e;
         }
+    }
+
+    @Override
+    public void deleteByCourseCode(String code) {
+        subjectRepository.deleteByCourse(courseRepository.getCourseByCodeCourse(code).get());
     }
 }

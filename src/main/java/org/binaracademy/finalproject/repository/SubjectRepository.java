@@ -1,5 +1,6 @@
 package org.binaracademy.finalproject.repository;
 
+import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,6 +16,9 @@ public interface SubjectRepository extends JpaRepository<Subject, String> {
     Optional<Subject> findByCode(String code);
 
     Boolean existsByCode(String code);
+
+    @Modifying
+    void deleteByCourse(Course course);
 
     @Modifying
     @Query(nativeQuery = true, value = "delete from subject where code = :code")
