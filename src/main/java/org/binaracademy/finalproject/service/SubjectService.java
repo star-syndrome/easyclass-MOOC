@@ -18,4 +18,6 @@ public interface SubjectService {
     SubjectResponse updateSubject(UpdateSubjectRequest subject, String code);
 
     void deleteSubjectByCode(String code);
+
+    void deleteByCourseCode(String code);
 }

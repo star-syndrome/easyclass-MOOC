@@ -10,6 +10,7 @@ import org.binaracademy.finalproject.repository.CourseRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.CourseService;
 import org.binaracademy.finalproject.service.OrderService;
+import org.binaracademy.finalproject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,9 @@ public class CourseServiceImplements implements CourseService {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private SubjectService subjectService;
 
     private CourseResponse toCourseResponse(Course course) {
         return CourseResponse.builder()
@@ -144,8 +148,8 @@ public class CourseServiceImplements implements CourseService {
             }
             assert course != null;
             orderService.deleteByCodeCourse(codeCourse);
+            subjectService.deleteByCourseCode(codeCourse);
             course.getCategories().clear();
-            course.getSubjects().clear();
             log.info("Deleting the course with course code: {} successful!", codeCourse);
             courseRepository.deleteByCode(codeCourse);
         } catch (Exception e) {
