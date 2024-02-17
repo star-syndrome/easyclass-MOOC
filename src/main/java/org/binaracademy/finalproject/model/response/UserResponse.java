@@ -12,11 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserResponse {
 
-    private String username;
+    private String fullname;
     private String email;
     private String password;
     private String phoneNumber;
     private String country;
     private String city;
     private String linkPhoto;
+    private Boolean isActive;
 }

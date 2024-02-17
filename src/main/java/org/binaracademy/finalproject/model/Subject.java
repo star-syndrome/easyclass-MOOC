@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
@@ -24,7 +25,9 @@ public class Subject {
     @ManyToOne(fetch = FetchType.LAZY)
     private Course course;
 
+    @NotBlank
     private String code;
+
     private String title;
     private String linkVideo;
     private String description;

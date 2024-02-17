@@ -2,7 +2,6 @@ package org.binaracademy.finalproject.controller;
 
 import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.model.response.ResponseController;
-import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,7 +21,10 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(
+            path = "/getAll",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Object> getAllCourse(){
         try {
             return ResponseController.statusResponse(HttpStatus.OK,
@@ -32,20 +34,13 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/detailsFromTitle", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> courseDetailFromTitle(@RequestParam String title) {
-        CourseDTO courseDTO = courseService.courseDetailsFromTitle(title);
-        try {
-            if (Objects.nonNull(courseDTO)) {
-                return ResponseController.statusResponse(HttpStatus.OK,
-                        "Success getting all information about course " + title,
-                        courseService.courseDetailsFromTitle(title));
-            }
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    "Course not found!", null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+    @GetMapping(
+            path = "/detailsFromCode",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> courseDetailFromCode(@RequestParam String code) {
+        return ResponseController.statusResponse(HttpStatus.OK,
+                "Success getting all information about course " + code, courseService.courseDetailsFromCode(code));
     }
 
     @GetMapping(value = "/getCourseOrder", produces = MediaType.APPLICATION_JSON_VALUE)

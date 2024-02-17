@@ -1,9 +1,9 @@
 package org.binaracademy.finalproject.service;
 
+import org.binaracademy.finalproject.model.request.CreateCourseRequest;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
 import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.DTO.CourseDTO;
-import org.binaracademy.finalproject.model.Course;
 import org.binaracademy.finalproject.model.response.AddCourseResponse;
 import org.binaracademy.finalproject.model.response.CourseResponseTele;
 import org.binaracademy.finalproject.model.response.GetAllCourseAdminResponse;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface CourseService {
 
-    AddCourseResponse addNewCourse (Course course);
+    AddCourseResponse addNewCourse (CreateCourseRequest request);
 
     List<CourseResponse> getAllCourse();
 
@@ -21,7 +21,7 @@ public interface CourseService {
 
     void deleteCourseByCode(String codeCourse);
 
-    CourseDTO courseDetailsFromTitle(String titleCourse);
+    CourseDTO courseDetailsFromCode(String code);
 
     List<GetAllCourseAdminResponse> getAllCourseAdmin();
 

@@ -6,11 +6,11 @@ import java.util.Optional;
 
 public interface ResetPasswordService {
 
-    ResetPassword createToken(String username);
+    ResetPassword createToken(String email);
 
     Optional<ResetPassword> findByToken(String token);
 
     ResetPassword verifyExpiration(ResetPassword token);
 
-    void deleteByUsername(String username);
+    void deleteByEmail(String email);
 }

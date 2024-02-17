@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class CreateOrderRequest {
 
     private String paymentMethod;
-    private String courseTitle;
+    private String courseCode;
 }

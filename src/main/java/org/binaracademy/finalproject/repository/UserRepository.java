@@ -12,17 +12,11 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<Users, Long> {
 
-    Optional<Users> getUserByUsername(String username);
-
-    Optional<Users> findByUsername(String username);
-
     Optional<Users> findByEmail(String email);
-
-    Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
 
     @Modifying
-    @Query(nativeQuery = true, value = "delete from users where username = :username")
-    void deleteUserFromUsername(@Param("username") String username);
+    @Query("DELETE FROM Users WHERE email = :email")
+    void deleteUserFromEmail(@Param("email") String email);
 }

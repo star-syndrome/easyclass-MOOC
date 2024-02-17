@@ -17,20 +17,19 @@ import java.util.Set;
 public class SignupRequest {
 
     @NotBlank
-    @Size(min = 3, max = 20)
-    private String username;
+    @Size(max = 100)
+    private String fullName;
 
     @NotBlank
     @Email
     private String email;
 
-    private Set<String> role; // Ilangin kalo mau auto role user ketika register account
+    private Set<String> role;
 
     @NotBlank
     @Size(min = 6, max = 20)
     private String password;
 
-    @NotBlank
     @Size(max = 15)
     private String phoneNumber;
 

@@ -14,10 +14,11 @@ public class GetUserResponse {
 
     private Long id;
     private String password;
-    private String username;
+    private String fullname;
     private String email;
     private String phoneNumber;
     private String country;
     private String city;
     private String linkPhoto;
+    private Boolean isActive;
 }

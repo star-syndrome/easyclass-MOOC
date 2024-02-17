@@ -29,8 +29,8 @@ public class CloudinaryServiceImplements implements CloudinaryService {
 
     @Override
     public MessageResponse upload(MultipartFile multipartFile) throws IOException {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Users> users = userRepository.findByUsername(username);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Users> users = userRepository.findByEmail(email);
         try {
             Map<?, ?> uploadResult = cloudinary.uploader().upload(multipartFile.getBytes(),
                     ObjectUtils.emptyMap());

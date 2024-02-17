@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Optional;
 
 @CrossOrigin("*")
@@ -30,46 +29,32 @@ public class UserController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(
+            path = "/get",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Object> getUserLogin(){
-        try {
-            return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success get user!", userService.getUser());
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+        return ResponseController.statusResponse(HttpStatus.OK, "Success get user!", userService.getUser());
     }
 
     @PutMapping(value = "/update",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateUser(@RequestBody UpdateUserRequest users) {
-        try {
-            return ResponseController.statusResponse(HttpStatus.OK,
-                    "Update user successful!", userService.updateUsers(users));
-        } catch (RuntimeException runtimeException) {
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    runtimeException.getMessage(), null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+        return ResponseController.statusResponse(HttpStatus.OK,
+                "Update user successful!", userService.updateUsers(users));
     }
 
-    @DeleteMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(
+            path = "/delete",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Object> deleteUser(){
-        try {
-            userService.deleteUsersByUsername();
-            return ResponseController.statusResponse(HttpStatus.OK,
-                    "Deleting user successful!", null);
-        } catch (RuntimeException runtimeException) {
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    runtimeException.getMessage(), null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+        userService.deleteUsersByEmail();
+        return ResponseController.statusResponse(HttpStatus.OK, "Deleting user successful!", null);
     }
 
-    @PostMapping(value = "/upload")
+    @PostMapping(path = "/uploadImage")
     public ResponseEntity<MessageResponse> uploadImage(@ModelAttribute UploadImageRequest uploadImageRequest) {
         log.info("Trying to upload profile picture!");
         return Optional.of(uploadImageRequest)
@@ -87,15 +72,13 @@ public class UserController {
                         .build(), HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
-    @PatchMapping(value = "/changePassword")
+    @PatchMapping(
+            path = "/changePassword",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-        try {
-            userService.changePassword(changePasswordRequest);
-            return ResponseController.statusResponse(HttpStatus.OK, "Change Password successful!", null);
-        } catch (RuntimeException runtimeException) {
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND, runtimeException.getMessage(), null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+        userService.changePassword(changePasswordRequest);
+        return ResponseController.statusResponse(HttpStatus.OK, "Change Password successful!", null);
     }
 }

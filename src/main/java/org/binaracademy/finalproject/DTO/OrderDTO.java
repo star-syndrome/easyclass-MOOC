@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.binaracademy.finalproject.model.response.OrderResponse;
 import org.binaracademy.finalproject.model.response.OrderResponseForGetOrderTransaction;
 
 import java.util.List;

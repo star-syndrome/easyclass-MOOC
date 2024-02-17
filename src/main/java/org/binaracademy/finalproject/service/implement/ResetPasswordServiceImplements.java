@@ -2,12 +2,16 @@ package org.binaracademy.finalproject.service.implement;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.binaracademy.finalproject.model.ResetPassword;
+import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.ResetPasswordRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.ResetPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -25,10 +29,16 @@ public class ResetPasswordServiceImplements implements ResetPasswordService {
     private ResetPasswordRepository resetPasswordRepository;
 
     @Override
-    public ResetPassword createToken(String username) {
-        ResetPassword resetPassword = new ResetPassword();
+    public ResetPassword createToken(String email) {
+        Users users = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
+        ResetPassword resetPassword = resetPasswordRepository.findByUsersId(users.getId());
 
-        resetPassword.setUsers(userRepository.getUserByUsername(username).get());
+        if (resetPassword == null) {
+            resetPassword = new ResetPassword();
+        };
+
+        resetPassword.setUsers(users);
         resetPassword.setExpiryDate(Instant.now().plusMillis(tokenDurationMs));
         resetPassword.setToken(RandomStringUtils.randomNumeric(10));
 
@@ -45,13 +55,15 @@ public class ResetPasswordServiceImplements implements ResetPasswordService {
     public ResetPassword verifyExpiration(ResetPassword token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             resetPasswordRepository.delete(token);
-            throw new RuntimeException("Token was expired");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token was expired!");
         }
         return token;
     }
 
     @Override
-    public void deleteByUsername(String username) {
-        resetPasswordRepository.deleteByUsers(userRepository.getUserByUsername(username).get());
+    @Transactional
+    public void deleteByEmail(String email) {
+        resetPasswordRepository.deleteByUsers(userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!")));
     }
 }

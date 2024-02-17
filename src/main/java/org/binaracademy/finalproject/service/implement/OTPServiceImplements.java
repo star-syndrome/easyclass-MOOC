@@ -2,14 +2,17 @@ package org.binaracademy.finalproject.service.implement;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.binaracademy.finalproject.model.OneTimePassword;
+import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.OneTimePasswordRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
 import org.binaracademy.finalproject.service.OTPService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -31,10 +34,16 @@ public class OTPServiceImplements implements OTPService {
     }
 
     @Override
-    public OneTimePassword createOTP(String username) {
-        OneTimePassword oneTimePassword = new OneTimePassword();
+    public OneTimePassword createOTP(String email) {
+        Users users = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
+        OneTimePassword oneTimePassword = oneTimePasswordRepository.findByUsersId(users.getId());
 
-        oneTimePassword.setUsers(userRepository.getUserByUsername(username).get());
+        if (oneTimePassword == null) {
+            oneTimePassword = new OneTimePassword();
+        }
+
+        oneTimePassword.setUsers(users);
         oneTimePassword.setExpiryDate(Instant.now().plusMillis(otpDurationMs));
         oneTimePassword.setOtp(RandomStringUtils.randomNumeric(6));
 
@@ -46,14 +55,15 @@ public class OTPServiceImplements implements OTPService {
     public OneTimePassword verifyExpiration(OneTimePassword otp) {
         if (otp.getExpiryDate().compareTo(Instant.now()) < 0) {
             oneTimePasswordRepository.delete(otp);
-            throw new RuntimeException("OTP was expired!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP was expired!");
         }
         return otp;
     }
 
-    @Transactional
     @Override
-    public void deleteByUsername(String username) {
-        oneTimePasswordRepository.deleteByUsers(userRepository.getUserByUsername(username).get());
+    @Transactional
+    public void deleteByEmail(String email) {
+        oneTimePasswordRepository.deleteByUsers(userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!")));
     }
 }

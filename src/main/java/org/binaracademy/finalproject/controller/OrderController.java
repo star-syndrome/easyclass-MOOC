@@ -5,6 +5,7 @@ import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,41 +17,32 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping(value = "/getDataOrder")
-    public ResponseEntity<Object> getOrder(@RequestParam String title) {
-        try {
-            return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success getting data course for order!", orderService.getDataOrder(title));
-        } catch (RuntimeException rte) {
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    rte.getMessage(), null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+    @GetMapping(
+            path = "/getDataCourseForOrder",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> getOrder(@RequestParam String code) {
+        return ResponseController.statusResponse(HttpStatus.OK,
+                "Success getting data course for order!", orderService.getDataOrder(code));
+
     }
 
-    @PostMapping(value = "/create")
+    @PostMapping(
+            path = "/createOrder",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Object> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
-        try {
-            return ResponseEntity.ok().body(orderService.createOrder(createOrderRequest));
-        } catch (RuntimeException rte) {
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    rte.getMessage(), null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+            return ResponseController.statusResponse(HttpStatus.OK,
+                    "Success create an order!", orderService.createOrder(createOrderRequest));
     }
 
-    @GetMapping(value = "/getOrderTransactions")
+    @GetMapping(
+            path = "/getOrderTransactions",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Object> getOrderTransactions() {
-        try {
-            return ResponseController.statusResponse(HttpStatus.OK,
-                    "Success getting order transactions!", orderService.getOrderTransactions());
-        } catch (RuntimeException rte) {
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    rte.getMessage(), null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+        return ResponseController.statusResponse(HttpStatus.OK,
+                "Success getting order transactions!", orderService.getOrderTransactions());
     }
 }

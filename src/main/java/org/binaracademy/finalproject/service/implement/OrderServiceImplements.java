@@ -17,9 +17,11 @@ import org.binaracademy.finalproject.security.response.MessageResponse;
 import org.binaracademy.finalproject.service.EmailService;
 import org.binaracademy.finalproject.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -45,59 +47,68 @@ public class OrderServiceImplements implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public GetOrderResponse getDataOrder(String title) {
-        log.info("Success getting data order");
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found!"));
-        return courseRepository.findByTitleCourse(title)
-                .map(course -> GetOrderResponse.builder()
-                        .title(course.getTitleCourse())
-                        .teacher(course.getTeacher())
-                        .category(course.getCategories())
-                        .price(course.getPriceCourse())
-                        .ppn(course.getPriceCourse() * 0.11)
-                        .totalPrice(course.getPriceCourse() + (course.getPriceCourse() * 0.11))
-                        .build())
-                .orElseThrow(() -> new RuntimeException("Course not found!"));
+    public GetOrderResponse getDataOrder(String code) {
+        try {
+            log.info("Success getting data order");
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
+
+            return courseRepository.findByCode(code)
+                    .map(course -> GetOrderResponse.builder()
+                            .title(course.getTitle())
+                            .teacher(course.getTeacher())
+                            .category(course.getCategories())
+                            .price(course.getPrice())
+                            .ppn(course.getPrice() * 0.11)
+                            .totalPrice(course.getPrice() + (course.getPrice() * 0.11))
+                            .build())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public MessageResponse createOrder(CreateOrderRequest createOrderRequest) {
         try {
-            log.info("Processing create order from course: {}", createOrderRequest.getCourseTitle());
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            Optional<Users> users = userRepository.findByUsername(username);
-            Optional<Course> course = courseRepository.findByTitleCourse(createOrderRequest.getCourseTitle());
-            Users user = users.get();
-            Course courses = course.get();
+            log.info("Processing create order from course code: {}", createOrderRequest.getCourseCode());
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
+            Optional<Course> courses = Optional.ofNullable(courseRepository.findByCode(createOrderRequest.getCourseCode())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found")));
 
-            Boolean orderValidation = orderRepository.orderValidation(user.getId(), courses.getId());
+            Boolean orderValidation = orderRepository.orderValidation(users.getId(), courses.get().getId());
             if (Boolean.TRUE.equals(orderValidation)) {
                 return MessageResponse.builder()
                         .message("User already ordered this course!")
                         .build();
             }
+
             Order order = new Order();
             order.setPaymentMethod(createOrderRequest.getPaymentMethod());
             order.setOrderTime(new Date());
             order.setPaid(Boolean.TRUE);
-            order.setUsers(userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")));
-            order.setCourse(courseRepository.findByTitleCourse(createOrderRequest.getCourseTitle()).orElseThrow(() -> new RuntimeException("Course not found")));
-
+            order.setUsers(users);
+            order.setCourse(courses.get());
             orderRepository.save(order);
 
             emailService.sendEmail(EmailRequest.builder()
-                            .recipient(user.getEmail())
+                            .recipient(users.getEmail())
                             .subject("E-receipt Easy Class")
-                            .content("This is your receipt!" + "\nUsername: " + order.getUsers().getUsername() +"\nCourse: " + order.getCourse().getTitleCourse() +
-                                    "\nPayment: " + order.getPaymentMethod() + "\nPaid: " + order.getPaid() + "\nOrder Time: " + order.getOrderTime() + "\nOrder Id: " + order.getId() + "\nThank you!")
+                            .content("This is your receipt!" + "\nName: " + order.getUsers().getFullName() + "\nCourse: "
+                                    + order.getCourse().getTitle() + "\nPayment: " + order.getPaymentMethod() + "\nPaid: "
+                                    + order.getPaid() + "\nOrder Time: " + order.getOrderTime() + "\nOrder Id: " + order.getId()
+                                    + "\nThank you!")
                     .build());
 
             return MessageResponse.builder()
                     .message("Create order successfully!")
                     .build();
         } catch (Exception e) {
-            log.error("Create order where course " + createOrderRequest.getCourseTitle() + " failed");
+            log.error("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -105,22 +116,27 @@ public class OrderServiceImplements implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public OrderDTO getOrderTransactions() {
-        log.info("Success getting transaction history!");
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Users> users = userRepository.findByUsername(username);
-        Users getOrder = users.get();
+        try {
+            log.info("Success getting transaction history!");
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setId(getOrder.getId());
-        orderDTO.setOrderResponses(getOrder.getOrders().stream()
-                .map(order -> OrderResponseForGetOrderTransaction.builder()
-                        .time(order.getOrderTime())
-                        .paymentMethod(order.getPaymentMethod())
-                        .completed(order.getPaid())
-                        .courseId(order.getCourse().getId())
-                        .build())
-                .collect(Collectors.toList()));
-        return orderDTO;
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setId(users.getId());
+            orderDTO.setOrderResponses(users.getOrders().stream()
+                    .map(order -> OrderResponseForGetOrderTransaction.builder()
+                            .time(order.getOrderTime())
+                            .paymentMethod(order.getPaymentMethod())
+                            .completed(order.getPaid())
+                            .courseId(order.getCourse().getId())
+                            .build())
+                    .collect(Collectors.toList()));
+            return orderDTO;
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
@@ -133,13 +149,14 @@ public class OrderServiceImplements implements OrderService {
     }
 
     @Override
-    public void deleteByUsername(String username) {
-        orderRepository.deleteByUsers(userRepository.getUserByUsername(username).get());
+    public void deleteByEmail(String email) {
+        orderRepository.deleteByUsers(userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!")));
     }
 
     @Override
     public void deleteByCodeCourse(String codeCourse) {
-        orderRepository.deleteByCourse(courseRepository.getCourseByCodeCourse(codeCourse).get());
+        orderRepository.deleteByCourse(courseRepository.getCourseByCode(codeCourse).get());
     }
 
     private OrderResponse getOrderResponse(Order order) {

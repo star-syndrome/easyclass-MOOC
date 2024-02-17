@@ -11,13 +11,13 @@ public interface UserService {
 
     UserResponse updateUsers(UpdateUserRequest updateUsers);
 
-    void deleteUsersByUsername();
+    void deleteUsersByEmail();
 
     List<GetUserResponse> getAllUser();
 
     GetUserResponse getUser();
 
-    void deleteUserForAdmin(String username);
+    void deleteUserForAdmin(String email);
 
     void changePassword(ChangePasswordRequest request);
 }

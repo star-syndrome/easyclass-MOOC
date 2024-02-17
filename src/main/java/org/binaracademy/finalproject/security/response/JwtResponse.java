@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JwtResponseSignIn {
+public class JwtResponse {
 
     private String token;
     private String type = "Bearer";
@@ -20,7 +20,7 @@ public class JwtResponseSignIn {
     private String email;
     private List<String> roles;
 
-    public JwtResponseSignIn(String token, Long id, String username, String email, List<String> roles) {
+    public JwtResponse(String token, Long id, String username, String email, List<String> roles) {
         this.token = token;
         this.id = id;
         this.username = username;

@@ -13,6 +13,10 @@ public interface OneTimePasswordRepository extends JpaRepository<OneTimePassword
 
     Optional<OneTimePassword> findByOtp(String otp);
 
+    OneTimePassword findByUsersId(Long id);
+
+    Boolean existsByOtp(String otp);
+
     @Modifying
     void deleteByUsers(Users users);
 }

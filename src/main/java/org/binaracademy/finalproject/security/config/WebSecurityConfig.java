@@ -2,7 +2,7 @@ package org.binaracademy.finalproject.security.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.security.enumeration.ERole;
-import org.binaracademy.finalproject.security.service.UserDetailsServiceImpl;
+import org.binaracademy.finalproject.service.implement.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

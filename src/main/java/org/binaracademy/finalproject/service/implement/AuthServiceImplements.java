@@ -6,20 +6,23 @@ import org.binaracademy.finalproject.model.ResetPassword;
 import org.binaracademy.finalproject.model.Roles;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.EmailRequest;
+import org.binaracademy.finalproject.model.request.ResetPasswordRequest;
+import org.binaracademy.finalproject.repository.OneTimePasswordRepository;
+import org.binaracademy.finalproject.repository.ResetPasswordRepository;
 import org.binaracademy.finalproject.repository.RoleRepository;
 import org.binaracademy.finalproject.repository.UserRepository;
-import org.binaracademy.finalproject.security.UserDetailsImpl;
 import org.binaracademy.finalproject.security.config.JwtUtils;
 import org.binaracademy.finalproject.security.enumeration.ERole;
 import org.binaracademy.finalproject.security.request.LoginRequest;
 import org.binaracademy.finalproject.security.request.SignupRequest;
-import org.binaracademy.finalproject.security.response.JwtResponseSignIn;
+import org.binaracademy.finalproject.security.response.JwtResponse;
 import org.binaracademy.finalproject.security.response.MessageResponse;
 import org.binaracademy.finalproject.service.AuthService;
 import org.binaracademy.finalproject.service.EmailService;
 import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.ResetPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +30,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +40,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Transactional
 public class AuthServiceImplements implements AuthService {
 
     @Autowired
@@ -61,6 +67,15 @@ public class AuthServiceImplements implements AuthService {
     @Autowired
     private ResetPasswordService resetPasswordService;
 
+    @Autowired
+    private OneTimePasswordRepository oneTimePasswordRepository;
+
+    @Autowired
+    private ResetPasswordRepository resetPasswordRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     public AuthServiceImplements(AuthenticationManager authenticationManager, UserRepository usersRepository,
                                  JwtUtils jwtUtils, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
@@ -72,102 +87,183 @@ public class AuthServiceImplements implements AuthService {
 
     @Override
     public MessageResponse registerUser(SignupRequest signupRequest) {
-        Boolean usernameExist = usersRepository.existsByUsername(signupRequest.getUsername());
-        if (Boolean.TRUE.equals(usernameExist)) {
+        try {
+            Boolean emailExist = usersRepository.findByEmail(signupRequest.getEmail()).isPresent();
+            if (Boolean.TRUE.equals(emailExist)) {
+                return MessageResponse.builder()
+                        .message("Error: Email is already taken!")
+                        .build();
+            }
+
+            Users users = new Users();
+            users.setFullName(signupRequest.getFullName());
+            users.setEmail(signupRequest.getEmail());
+            users.setIsActive(false);
+            users.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+            users.setPhoneNumber(signupRequest.getPhoneNumber());
+            users.setCountry(signupRequest.getCountry());
+            users.setCity(signupRequest.getCity());
+
+            Set<String> strRoles = signupRequest.getRole();
+            Set<Roles> roles = new HashSet<>();
+
+            if (strRoles == null) {
+                Roles role = roleRepository.findByRoleName(ERole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+                roles.add(role);
+            } else {
+                strRoles.forEach(role -> {
+                    Roles roles1 = roleRepository.findByRoleName(ERole.valueOf(role))
+                            .orElseThrow(() -> new RuntimeException("Error: Role " + role + " is not found"));
+                    roles.add(roles1);
+                });
+            }
+            users.setRoles(roles);
+            usersRepository.save(users);
+
+            OneTimePassword oneTimePassword = otpService.createOTP(users.getEmail());
+            emailService.sendEmail(EmailRequest.builder()
+                    .subject("One Time Password")
+                    .recipient(users.getEmail())
+                    .content("Please input this OTP " + oneTimePassword.getOtp() +
+                            " to verify your account for access Easy Class, thank you!")
+                    .build());
+
+            log.info("User registered successfully, name: {}", users.getFullName());
             return MessageResponse.builder()
-                    .message("Error: Username is already taken!")
+                    .message("User registered successfully, name: " + users.getFullName())
                     .build();
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
         }
-
-        Boolean emailExist = usersRepository.existsByEmail(signupRequest.getEmail());
-        if (Boolean.TRUE.equals(emailExist)) {
-            return MessageResponse.builder()
-                    .message("Error: Email is already taken!")
-                    .build();
-        }
-
-        Users users = new Users(signupRequest.getUsername(), signupRequest.getEmail(),
-                passwordEncoder.encode(signupRequest.getPassword()), signupRequest.getPhoneNumber(),
-                signupRequest.getCountry(), signupRequest.getCity());
-
-        Set<String> strRoles = signupRequest.getRole();
-        Set<Roles> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            Roles role = roleRepository.findByRoleName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-            roles.add(role);
-        } else {
-            strRoles.forEach(role -> {
-                Roles roles1 = roleRepository.findByRoleName(ERole.valueOf(role))
-                        .orElseThrow(() -> new RuntimeException("Error: Role " + role + " is not found"));
-                roles.add(roles1);
-            });
-        }
-        users.setRoles(roles);
-        usersRepository.save(users);
-
-        OneTimePassword oneTimePassword = otpService.createOTP(users.getUsername());
-        emailService.sendEmail(EmailRequest.builder()
-                .subject("One Time Password")
-                .recipient(users.getEmail())
-                .content("Please insert this OTP " + oneTimePassword.getOtp() + " for verify your account to access Easy Class, thank you!")
-                .build());
-
-        log.info("User registered successfully, username: {}", users.getUsername());
-        return MessageResponse.builder()
-                .message("User registered successfully, username: " + users.getUsername())
-                .build();
     }
 
     @Override
-    public JwtResponseSignIn authenticateUser(LoginRequest login) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword())
-        );
+    public JwtResponse authenticateUser(LoginRequest login) {
+        try {
+            Users users = usersRepository.findByEmail(login.getEmail())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+            if (!users.getIsActive()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account has not been verified!");
+            }
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        log.info("User: " + userDetails.getUsername() + " successfully sign in");
-        return new JwtResponseSignIn(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles);
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(users.getEmail(), login.getPassword())
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+
+            Users userDetails = (Users) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+
+            log.info("User: " + userDetails.getFullName() + " successfully sign in");
+            return new JwtResponse(jwt, userDetails.getId(), userDetails.getFullName(),
+                    userDetails.getEmail(), roles);
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
-    public MessageResponse sendToken(String username) {
-        log.info("Trying send token to user " + " for reset password");
-        Users users = usersRepository.findByUsername(username).get();
-        ResetPassword resetPassword = resetPasswordService.createToken(username);
+    public MessageResponse sendToken(String email) {
+        try {
+            log.info("Trying send token to " + email + " for reset password");
+            Users users = usersRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
+            ResetPassword resetPassword = resetPasswordService.createToken(email);
 
-        emailService.sendEmail(EmailRequest.builder()
-                        .subject("Reset Password for Easy Class")
-                        .recipient(users.getEmail())
-                        .content("https://easyclass-course.vercel.app/auth/resetPassword/" + resetPassword.getToken()
-                                + "\n\nhttp://localhost:5173/auth/resetPassword/" + resetPassword.getToken())
-                .build());
-        log.info("Send token for reset password successfully!");
-        return MessageResponse.builder().message("Success sending a token for reset password!").build();
+            emailService.sendEmail(EmailRequest.builder()
+                    .subject("Reset Password for Easy Class")
+                    .recipient(users.getEmail())
+                    .content("Click the link below to reset your password!" +
+                            "\nhttps://easyclass-course.vercel.app/auth/resetPassword?token=" + resetPassword.getToken())
+                    .build());
+            log.info("Send token for reset password successfully!");
+            return MessageResponse.builder().message("Success sending a token for reset password!").build();
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public MessageResponse refreshOTP(String email) {
-        Users users = usersRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with this username: " + email));
-        OneTimePassword otp = otpService.createOTP(users.getUsername());
         try {
+            log.info("Trying to refresh OTP");
+            Users users = usersRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "User not found with this email: " + email));
+            OneTimePassword otp = otpService.createOTP(users.getEmail());
+
             emailService.sendEmail(EmailRequest.builder()
-                            .subject("Refresh OTP For Easy Class")
-                            .recipient(users.getEmail())
-                            .content(otp.getOtp())
-                    .build());
-        } catch (RuntimeException e) {
-            log.error("Unable to send OTP");
+                        .subject("Refresh OTP For Easy Class")
+                        .recipient(users.getEmail())
+                        .content(otp.getOtp())
+                        .build());
+            log.info("Refresh OTP success!");
+            return MessageResponse.builder().message("Refresh OTP Success!").build();
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             throw e;
         }
-        return MessageResponse.builder().message("Refresh OTP Success!").build();
+    }
+
+    @Override
+    public void verifyAccountWithOTP(String email, String otp) {
+        try {
+            log.info("Trying to verify account with OTP and email");
+            if (!usersRepository.existsByEmail(email)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found!");
+            }
+
+            if (!oneTimePasswordRepository.existsByOtp(otp)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP not match!");
+            }
+
+            otpService.findByOtp(otp)
+                    .map(otpService::verifyExpiration)
+                    .map(OneTimePassword::getUsers)
+                    .ifPresent(users -> {
+                        users.setIsActive(true);
+                        usersRepository.save(users);
+                        otpService.deleteByEmail(users.getEmail());
+                    });
+            log.info("Success verify account!");
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequest request, String token) {
+        try {
+            log.info("Trying to reset password");
+            if (!resetPasswordRepository.existsByToken(token)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Link not valid!");
+            }
+
+            resetPasswordService.findByToken(token)
+                    .map(resetPasswordService::verifyExpiration)
+                    .map(ResetPassword::getUsers)
+                    .ifPresent(users -> {
+                        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
+                            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password not match");
+                        }
+                        String encodePassword = passwordEncoder.encode(request.getNewPassword());
+                        users.setPassword(encodePassword);
+                        userRepository.save(users);
+                    });
+            log.info("Reset password successful!");
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 }

@@ -21,6 +21,6 @@ public interface SubjectRepository extends JpaRepository<Subject, String> {
     void deleteByCourse(Course course);
 
     @Modifying
-    @Query(nativeQuery = true, value = "delete from subject where code = :code")
+    @Query("DELETE FROM Subject WHERE code = :code")
     void deleteSubjectByCode(@Param("code") String code);
 }

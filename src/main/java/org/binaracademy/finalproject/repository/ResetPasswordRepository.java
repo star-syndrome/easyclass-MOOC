@@ -13,6 +13,10 @@ public interface ResetPasswordRepository extends JpaRepository<ResetPassword, Lo
 
     Optional<ResetPassword> findByToken(String token);
 
+    ResetPassword findByUsersId(Long id);
+
+    Boolean existsByToken(String token);
+
     @Modifying
     void deleteByUsers(Users users);
 }

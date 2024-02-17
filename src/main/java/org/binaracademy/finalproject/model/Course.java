@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "course", uniqueConstraints = @UniqueConstraint(columnNames = "codeCourse"))
+@Table(name = "course", uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public class Course {
 
     @Id
@@ -24,11 +25,13 @@ public class Course {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
-    private String aboutCourse;
-    private String titleCourse;
-    private String codeCourse;
-    private Double priceCourse;
-    private String levelCourse;
+    @NotBlank
+    private String code;
+
+    private String about;
+    private String title;
+    private Double price;
+    private String level;
     private String teacher;
     private Boolean isPremium;
     private String module;

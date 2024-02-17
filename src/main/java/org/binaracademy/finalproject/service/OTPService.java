@@ -6,11 +6,11 @@ import java.util.Optional;
 
 public interface OTPService {
 
-    OneTimePassword createOTP(String username);
+    OneTimePassword createOTP(String email);
 
     Optional<OneTimePassword> findByOtp(String otp);
 
     OneTimePassword verifyExpiration(OneTimePassword otp);
 
-    void deleteByUsername(String username);
+    void deleteByEmail(String email);
 }

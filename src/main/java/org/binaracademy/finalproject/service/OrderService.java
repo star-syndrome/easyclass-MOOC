@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    GetOrderResponse getDataOrder(String title);
+    GetOrderResponse getDataOrder(String code);
 
     MessageResponse createOrder(CreateOrderRequest createOrderRequest);
 
@@ -18,7 +18,7 @@ public interface OrderService {
 
     List<OrderResponse> getAllOrder();
 
-    void deleteByUsername(String username);
+    void deleteByEmail(String username);
 
     void deleteByCodeCourse(String codeCourse);
 }

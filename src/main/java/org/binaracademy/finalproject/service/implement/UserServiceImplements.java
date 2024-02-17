@@ -12,14 +12,14 @@ import org.binaracademy.finalproject.service.OrderService;
 import org.binaracademy.finalproject.service.ResetPasswordService;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,13 +44,14 @@ public class UserServiceImplements implements UserService {
 
     private UserResponse toUserResponse(Users users) {
         return UserResponse.builder()
-                .username(users.getUsername())
+                .fullname(users.getFullName())
                 .email(users.getEmail())
                 .password(users.getPassword())
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
                 .linkPhoto(users.getLinkPhoto())
+                .isActive(users.getIsActive())
                 .build();
     }
 
@@ -58,12 +59,13 @@ public class UserServiceImplements implements UserService {
         return GetUserResponse.builder()
                 .id(users.getId())
                 .password(users.getPassword())
-                .username(users.getUsername())
+                .fullname(users.getFullName())
                 .email(users.getEmail())
                 .phoneNumber(users.getPhoneNumber())
                 .country(users.getCountry())
                 .city(users.getCity())
                 .linkPhoto(users.getLinkPhoto())
+                .isActive(users.getIsActive())
                 .build();
     }
 
@@ -71,39 +73,40 @@ public class UserServiceImplements implements UserService {
     public UserResponse updateUsers(UpdateUserRequest updateUsers) {
         try {
             log.info("Process updating user");
-            String username = getAuth();
-            Optional<Users> users = Optional.ofNullable(userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found")));
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-            Users users1 = users.get();
-            users1.setPhoneNumber(updateUsers.getPhoneNumber() == null ? users1.getPhoneNumber() : updateUsers.getPhoneNumber());
-            users1.setCountry(updateUsers.getCountry() == null ? users1.getCountry() : updateUsers.getCountry());
-            users1.setCity(updateUsers.getCity() == null ? users1.getCity() : updateUsers.getCity());
-            userRepository.save(users1);
+            users.setFullName(updateUsers.getFullName() == null ? users.getFullName() : updateUsers.getFullName());
+            users.setPhoneNumber(updateUsers.getPhoneNumber() == null ? users.getPhoneNumber() : updateUsers.getPhoneNumber());
+            users.setCountry(updateUsers.getCountry() == null ? users.getCountry() : updateUsers.getCountry());
+            users.setCity(updateUsers.getCity() == null ? users.getCity() : updateUsers.getCity());
+            userRepository.save(users);
             log.info("Updating user successful!");
 
-            return toUserResponse(users1);
+            return toUserResponse(users);
         } catch (Exception e) {
-            log.error("Update user failed");
+            log.error("Error: " + e.getMessage());
             throw e;
         }
     }
 
     @Override
-    public void deleteUsersByUsername() {
+    public void deleteUsersByEmail() {
         try {
-            String user = getAuth();
-            Optional<Users> users = userRepository.findByUsername(user);
-            Users users1 = users.get();
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-            resetPasswordService.deleteByUsername(users1.getUsername());
-            otpService.deleteByUsername(users1.getUsername());
-            orderService.deleteByUsername(users1.getUsername());
-            users1.getRoles().clear();
-            userRepository.deleteUserFromUsername(users1.getUsername());
+            resetPasswordService.deleteByEmail(users.getEmail());
+            otpService.deleteByEmail(users.getEmail());
+            orderService.deleteByEmail(users.getEmail());
+            users.getRoles().clear();
+
+            userRepository.deleteUserFromEmail(users.getEmail());
             log.info("Successfully deleted user!");
         } catch (Exception e){
-            log.error("Deleting user failed, please try again!");
+            log.error("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -120,66 +123,71 @@ public class UserServiceImplements implements UserService {
     @Override
     @Transactional(readOnly = true)
     public GetUserResponse getUser() {
-        log.info("Getting information details from user!");
-        String username = getAuth();
-        Optional<Users> users = userRepository.findByUsername(username);
-        Users users1 = users.get();
+        try {
+            log.info("Getting information details from user!");
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        GetUserResponse getUserResponse = new GetUserResponse();
-        getUserResponse.setId(users1.getId());
-        getUserResponse.setUsername(users1.getUsername());
-        getUserResponse.setEmail(users1.getEmail());
-        getUserResponse.setPassword(users1.getPassword());
-        getUserResponse.setPhoneNumber(users1.getPhoneNumber());
-        getUserResponse.setCountry(users1.getCountry());
-        getUserResponse.setCity(users1.getCity());
-        getUserResponse.setLinkPhoto(users1.getLinkPhoto());
+            GetUserResponse getUserResponse = new GetUserResponse();
+            getUserResponse.setId(users.getId());
+            getUserResponse.setFullname(users.getFullName());
+            getUserResponse.setEmail(users.getEmail());
+            getUserResponse.setPassword(users.getPassword());
+            getUserResponse.setPhoneNumber(users.getPhoneNumber());
+            getUserResponse.setCountry(users.getCountry());
+            getUserResponse.setCity(users.getCity());
+            getUserResponse.setLinkPhoto(users.getLinkPhoto());
+            getUserResponse.setIsActive(users.getIsActive());
 
-        return getUserResponse;
+            return getUserResponse;
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
-    public void deleteUserForAdmin(String username) {
-        log.info("Trying to deleting user with username: {}", username);
+    public void deleteUserForAdmin(String email) {
+        log.info("Trying to deleting user with email: {}", email);
         try {
-            Users users = userRepository.findByUsername(username).orElse(null);
-            if (!Optional.ofNullable(users).isPresent()) {
-                log.info("User is not available");
-            }
-            resetPasswordService.deleteByUsername(username);
-            otpService.deleteByUsername(username);
-            orderService.deleteByUsername(username);
-            assert users != null;
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
+
+            resetPasswordService.deleteByEmail(email);
+            otpService.deleteByEmail(email);
+            orderService.deleteByEmail(email);
             users.getRoles().clear();
-            userRepository.deleteUserFromUsername(username);
-            log.info("Successfully deleted user {}!", username);
+
+            userRepository.deleteUserFromEmail(email);
+            log.info("Successfully deleted user {}!", email);
         } catch (Exception e) {
-            log.error("Deleting user failed, please try again!");
+            log.error("Error: " + e.getMessage());
             throw e;
         }
     }
 
     @Override
     public void changePassword(ChangePasswordRequest request) {
-        String username = getAuth();
-        Optional<Users> users = userRepository.findByUsername(username);
-        Users users1 = users.get();
+        try {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        log.info("Trying to change password for user: {}", users1.getUsername());
-        if (!passwordEncoder.matches(request.getCurrentPassword(), users1.getPassword())) {
-            throw new IllegalStateException("Wrong Password");
-        }
-        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
-            throw new IllegalStateException("Wrong Password");
-        }
-        users1.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(users1);
-        log.info("Successfully changed password!");
-    }
+            log.info("Trying to change password for user: {}", users.getFullName());
+            if (!passwordEncoder.matches(request.getCurrentPassword(), users.getPassword())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong Password");
+            }
+            if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong Password");
+            }
 
-    private String getAuth() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return username;
+            users.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(users);
+            log.info("Successfully changed password!");
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 }
