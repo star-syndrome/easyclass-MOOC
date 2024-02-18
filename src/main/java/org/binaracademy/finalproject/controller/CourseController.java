@@ -43,19 +43,13 @@ public class CourseController {
                 "Success getting all information about course " + code, courseService.courseDetailsFromCode(code));
     }
 
-    @GetMapping(value = "/getCourseOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(
+            path = "/getCourseOrder",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Object> getCourseOrder() {
-        List<CourseResponse> courseResponse = courseService.getCourseAfterOrder();
-        try {
-            if (Objects.nonNull(courseResponse)) {
-                return ResponseController.statusResponse(HttpStatus.OK,
-                        "Success get course!", courseService.getCourseAfterOrder());
-            }
-            return ResponseController.statusResponse(HttpStatus.NOT_FOUND,
-                    "Course not found!", null);
-        } catch (Exception e) {
-            return ResponseController.internalServerError(e.getMessage());
-        }
+        return ResponseController.statusResponse(HttpStatus.OK,
+                "Success getting course order!", courseService.getCourseAfterOrder());
     }
 
     @GetMapping(value = "/searchingCourse", produces = MediaType.APPLICATION_JSON_VALUE)

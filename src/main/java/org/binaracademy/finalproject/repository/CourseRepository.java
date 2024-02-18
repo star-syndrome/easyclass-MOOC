@@ -19,11 +19,8 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     Boolean existsByCode(String code);
 
-    Optional<Course> getCourseByCode(String codeCourse);
-
     @Modifying
-    @Query("DELETE FROM Course WHERE code = :code")
-    void deleteByCode(@Param("code") String codeCourse);
+    void deleteByCode(String code);
 
     @Query("SELECT c FROM Course c JOIN Order o ON o.course.id = c.id WHERE o.users.id = :ID")
     List<Course> getCourse(@Param("ID") Long id);

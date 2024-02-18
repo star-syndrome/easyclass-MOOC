@@ -147,14 +147,15 @@ public class CourseServiceImplements implements CourseService {
         try {
             log.info("Process of deleting a course");
             Course course = courseRepository.findByCode(codeCourse)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
 
-            orderService.deleteByCodeCourse(codeCourse);
-            subjectService.deleteByCourseCode(codeCourse);
             course.getCategories().clear();
+            subjectService.deleteByCourseCode(course.getCode());
+            orderService.deleteByCode(course.getCode());
 
-            log.info("Deleting the course with course code: {} successful!", codeCourse);
-            courseRepository.deleteByCode(codeCourse);
+            courseRepository.deleteByCode(course.getCode());
+            log.info("Deleting the course with course code: {} successful!", course.getCode());
+
         } catch (Exception e) {
             log.error("Error: " + e.getMessage());
             throw e;
@@ -250,13 +251,19 @@ public class CourseServiceImplements implements CourseService {
     @Override
     @Transactional(readOnly = true)
     public List<CourseResponse> getCourseAfterOrder() {
-        log.info("Trying to get data course after order!");
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Users> users = userRepository.findByEmail(email);
+        try {
+            log.info("Trying to get data course after order!");
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        return courseRepository.getCourse(users.get().getId()).stream()
-                .map(this::toCourseResponse)
-                .collect(Collectors.toList());
+            return courseRepository.getCourse(users.getId()).stream()
+                    .map(this::toCourseResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Error : " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override

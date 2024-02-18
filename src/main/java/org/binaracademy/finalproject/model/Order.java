@@ -29,8 +29,7 @@ public class Order {
     private Boolean paid;
     private String paymentMethod;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY)

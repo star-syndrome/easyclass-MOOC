@@ -45,4 +45,22 @@ public class OrderController {
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Success getting order transactions!", orderService.getOrderTransactions());
     }
+
+    @DeleteMapping(
+            path = "/deleteByCode",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> deleteOrderByCode(@RequestParam String code) {
+        orderService.deleteByCode(code);
+        return ResponseController.statusResponse(HttpStatus.OK, "Success!", null);
+    }
+
+    @DeleteMapping(
+            path = "/deleteByEmail",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> deleteOrderByEmail(@RequestParam String email) {
+        orderService.deleteByEmail(email);
+        return ResponseController.statusResponse(HttpStatus.OK, "Success!", null);
+    }
 }

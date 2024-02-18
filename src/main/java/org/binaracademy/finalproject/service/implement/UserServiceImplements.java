@@ -7,9 +7,7 @@ import org.binaracademy.finalproject.model.response.UserResponse;
 import org.binaracademy.finalproject.model.request.UpdateUserRequest;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.repository.UserRepository;
-import org.binaracademy.finalproject.service.OTPService;
 import org.binaracademy.finalproject.service.OrderService;
-import org.binaracademy.finalproject.service.ResetPasswordService;
 import org.binaracademy.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,13 +29,7 @@ public class UserServiceImplements implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private OTPService otpService;
-
-    @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private ResetPasswordService resetPasswordService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -98,13 +90,12 @@ public class UserServiceImplements implements UserService {
             Users users = userRepository.findByEmail(email)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-            resetPasswordService.deleteByEmail(users.getEmail());
-            otpService.deleteByEmail(users.getEmail());
             orderService.deleteByEmail(users.getEmail());
             users.getRoles().clear();
 
-            userRepository.deleteUserFromEmail(users.getEmail());
+            userRepository.deleteByEmail(users.getEmail());
             log.info("Successfully deleted user!");
+
         } catch (Exception e){
             log.error("Error: " + e.getMessage());
             throw e;
@@ -149,18 +140,17 @@ public class UserServiceImplements implements UserService {
 
     @Override
     public void deleteUserForAdmin(String email) {
-        log.info("Trying to deleting user with email: {}", email);
         try {
+            log.info("Trying to deleting user with email: {}", email);
             Users users = userRepository.findByEmail(email)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-            resetPasswordService.deleteByEmail(email);
-            otpService.deleteByEmail(email);
-            orderService.deleteByEmail(email);
+            orderService.deleteByEmail(users.getEmail());
             users.getRoles().clear();
 
-            userRepository.deleteUserFromEmail(email);
-            log.info("Successfully deleted user {}!", email);
+            userRepository.deleteByEmail(users.getEmail());
+            log.info("Successfully deleted user {}!", users.getEmail());
+
         } catch (Exception e) {
             log.error("Error: " + e.getMessage());
             throw e;

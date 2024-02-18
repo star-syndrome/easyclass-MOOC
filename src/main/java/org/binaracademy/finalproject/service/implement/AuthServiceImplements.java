@@ -259,6 +259,7 @@ public class AuthServiceImplements implements AuthService {
                         String encodePassword = passwordEncoder.encode(request.getNewPassword());
                         users.setPassword(encodePassword);
                         userRepository.save(users);
+                        resetPasswordService.deleteByEmail(users.getEmail());
                     });
             log.info("Reset password successful!");
         } catch (Exception e) {

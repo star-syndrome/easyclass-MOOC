@@ -146,6 +146,7 @@ public class SubjectServiceImplements implements SubjectService {
 
     @Override
     public void deleteByCourseCode(String code) {
-        subjectRepository.deleteByCourse(courseRepository.getCourseByCode(code).get());
+        subjectRepository.deleteByCourse(courseRepository.findByCode(code)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!")));
     }
 }

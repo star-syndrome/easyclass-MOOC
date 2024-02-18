@@ -150,13 +150,24 @@ public class OrderServiceImplements implements OrderService {
 
     @Override
     public void deleteByEmail(String email) {
-        orderRepository.deleteByUsers(userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!")));
+        try {
+            orderRepository.deleteByUsers(userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!")));
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
-    public void deleteByCodeCourse(String codeCourse) {
-        orderRepository.deleteByCourse(courseRepository.getCourseByCode(codeCourse).get());
+    public void deleteByCode(String code) {
+        try {
+            orderRepository.deleteByCourse(courseRepository.findByCode(code)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!")));
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            throw e;
+        }
     }
 
     private OrderResponse getOrderResponse(Order order) {
