@@ -168,10 +168,12 @@ public class CourseServiceImplements implements CourseService {
         try {
             log.info("Getting course detail information from course code: " + code);
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            Optional<Users> users = userRepository.findByEmail(email);
-            Optional<Course> course = courseRepository.findByCode(code);
+            Users users = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
+            Course course = courseRepository.findByCode(code)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
 
-            Boolean hasOrder = courseRepository.hasOrder(users.get().getId(), course.get().getId());
+            Boolean hasOrder = courseRepository.hasOrder(users.getId(), course.getId());
             return courseRepository.findByCode(code)
                     .map(courses -> CourseDTO.builder()
                             .addCourseResponse(AddCourseResponse.builder()
@@ -185,7 +187,8 @@ public class CourseServiceImplements implements CourseService {
                                     .categories(courses.getCategories())
                                     .module(courses.getModule())
                                     .duration(courses.getDuration())
-                                    .link(!courses.getIsPremium() ? courses.getLinkTelegram() : hasOrder ? courses.getLinkTelegram() : null)
+                                    .link(!courses.getIsPremium() ? courses.getLinkTelegram() :
+                                            hasOrder ? courses.getLinkTelegram() : null)
                                     .build())
                             .subjectResponse(courses.getSubjects().stream()
                                     .map(subject -> {

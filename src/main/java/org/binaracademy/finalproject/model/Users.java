@@ -58,8 +58,7 @@ public class Users implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Roles> roles = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
+    @OneToMany(mappedBy = "users")
     private List<Order> orders;
 
     @Override
