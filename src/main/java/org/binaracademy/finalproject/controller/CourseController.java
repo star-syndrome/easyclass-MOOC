@@ -1,5 +1,6 @@
 package org.binaracademy.finalproject.controller;
 
+import org.binaracademy.finalproject.DTO.CourseDTO;
 import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.service.CourseService;

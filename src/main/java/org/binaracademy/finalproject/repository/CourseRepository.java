@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,17 +21,17 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     @Modifying
     void deleteByCode(String code);
 
-    @Query("SELECT c FROM Course c JOIN Order o ON o.course.id = c.id WHERE o.users.id = :ID")
-    List<Course> getCourse(@Param("ID") Long id);
+    @Query("SELECT c FROM Course c JOIN Order o ON o.course.id = c.id WHERE o.users.id = :id")
+    List<Course> getCourse(Long id);
 
-    @Query("SELECT COUNT(*) > 0 FROM Order o WHERE o.users.id = :ID AND o.course.id = :ID")
-    Boolean hasOrder(@Param("ID") Long id, @Param("ID") String courseId);
+    @Query("SELECT COUNT(*) > 0 FROM Order o WHERE o.users.id = :user AND o.course.id = :course")
+    Boolean hasOrder(Long user, String course);
 
     @Query(nativeQuery = true, value = "select * from course c where c.title_course like %:title%")
-    List<Course> searchingCourse(@Param("title") String title);
+    List<Course> searchingCourse(String title);
 
     @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id where o.user_id = :userId and c.title_course like %:title%")
-    List<Course> searchingCourseAfterOrder(@Param("userId") Long userId, @Param("title") String title);
+    List<Course> searchingCourseAfterOrder(Long userId, String title);
 
     @Query(nativeQuery = true, value = "select c.* from course c join course_category cc on cc.course_id = c.id where cc.category_id = 1")
     List<Course> filterBackEnd();
@@ -62,11 +61,11 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     List<Course> filterCourseFree();
 
     @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id join course_category cc on cc.course_id = c.id where o.user_id = :userId and cc.category_id = 1")
-    List<Course> filterBackendAfterOrder(@Param("userId") Long userId);
+    List<Course> filterBackendAfterOrder(Long userId);
 
     @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id join course_category cc on cc.course_id = c.id where o.user_id = :userId and cc.category_id = 2")
-    List<Course> filterFrontendAfterOrder(@Param("userId") Long userId);
+    List<Course> filterFrontendAfterOrder(Long userId);
 
     @Query(nativeQuery = true, value = "select c.* from course c join orders o on o.course_id = c.id join course_category cc on cc.course_id = c.id where o.user_id = :userId and cc.category_id = 3")
-    List<Course> filterFullstackAfterOrder(@Param("userId") Long userId);
+    List<Course> filterFullstackAfterOrder(Long userId);
 }
