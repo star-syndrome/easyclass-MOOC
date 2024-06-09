@@ -25,9 +25,7 @@ public class Subject {
     @ManyToOne(fetch = FetchType.LAZY)
     private Course course;
 
-    @NotBlank
     private String code;
-
     private String title;
     private String linkVideo;
     private String description;

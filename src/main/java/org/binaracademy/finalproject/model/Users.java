@@ -9,9 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.*;
 
 @Data
@@ -27,7 +25,7 @@ public class Users implements UserDetails {
     private Long id;
 
     @NotBlank
-    @Size(max = 100)
+    @Size(min = 10, max = 25)
     private String fullName;
 
     @NotBlank

@@ -23,4 +23,7 @@ public interface SubjectRepository extends JpaRepository<Subject, String> {
     @Modifying
     @Query("DELETE FROM Subject WHERE code = :code")
     void deleteSubjectByCode(@Param("code") String code);
+
+    @Query("SELECT COUNT(s) > 0 FROM Subject s WHERE s.code = :code AND s.code != :ccode")
+    Boolean countByCodeForUpdate(String code, String ccode);
 }

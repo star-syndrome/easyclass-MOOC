@@ -77,10 +77,10 @@ public class OrderServiceImplements implements OrderService {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
             Users users = userRepository.findByEmail(email)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
-            Optional<Course> courses = Optional.ofNullable(courseRepository.findByCode(createOrderRequest.getCourseCode())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found")));
+            Course courses = courseRepository.findByCode(createOrderRequest.getCourseCode())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
 
-            Boolean orderValidation = orderRepository.orderValidation(users.getId(), courses.get().getId());
+            Boolean orderValidation = orderRepository.orderValidation(users.getId(), courses.getId());
             if (Boolean.TRUE.equals(orderValidation)) {
                 return MessageResponse.builder()
                         .message("User already ordered this course!")
@@ -92,7 +92,7 @@ public class OrderServiceImplements implements OrderService {
             order.setOrderTime(new Date());
             order.setPaid(Boolean.TRUE);
             order.setUsers(users);
-            order.setCourse(courses.get());
+            order.setCourse(courses);
             orderRepository.save(order);
 
             emailService.sendEmail(EmailRequest.builder()

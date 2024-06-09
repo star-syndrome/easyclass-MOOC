@@ -1,0 +1,15 @@
+runtime: java11
+manual_scaling:
+  instances: 1
+instance_class: B1
+env_variables:
+  database_postgres_url: lucky.db.elephantsql.com
+  database_postgres_username: weavmbtg
+  database_postgres_password: vmq7FFeoFD60vxaYanNNafqE-jUWHD4p
+  email_account: fpbejfejs1@gmail.com
+  email_password: hpvjurzjwhilbakc
+  email_host: smtp.gmail.com
+  email_port: 587
+  email_auth: true
+  email_tls: true
+  ssl_trust: smtp.gmail.com

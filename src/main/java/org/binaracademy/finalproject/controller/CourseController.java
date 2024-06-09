@@ -1,7 +1,8 @@
 package org.binaracademy.finalproject.controller;
 
-import org.binaracademy.finalproject.DTO.CourseDTO;
+import org.binaracademy.finalproject.model.request.SearchCourseRequest;
 import org.binaracademy.finalproject.model.response.CourseResponse;
+import org.binaracademy.finalproject.model.response.PagingResponse;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,30 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+    @GetMapping(
+            path = "/searchCourse",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> searchCourse(@RequestParam(required = false) String name,
+                                               @RequestParam(required = false) String about,
+                                               @RequestParam(defaultValue = "0") Integer page,
+                                               @RequestParam(defaultValue = "10") Integer size) {
+        SearchCourseRequest request = SearchCourseRequest.builder()
+                .name(name)
+                .about(about)
+                .page(page)
+                .size(size)
+                .build();
+
+        Page<CourseResponse> courseResponses = courseService.searchCourse(request);
+        return ResponseController.statusResponsePaging(HttpStatus.OK, "Success",
+                courseResponses.getContent(), PagingResponse.builder()
+                                .currentPage(courseResponses.getNumber())
+                                .totalPage(courseResponses.getTotalPages())
+                                .size(courseResponses.getSize())
+                        .build());
+    }
 
     @GetMapping(
             path = "/getAll",

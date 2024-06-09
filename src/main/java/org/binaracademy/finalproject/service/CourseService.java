@@ -1,6 +1,7 @@
 package org.binaracademy.finalproject.service;
 
 import org.binaracademy.finalproject.model.request.CreateCourseRequest;
+import org.binaracademy.finalproject.model.request.SearchCourseRequest;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
 import org.binaracademy.finalproject.model.response.CourseResponse;
 import org.binaracademy.finalproject.DTO.CourseDTO;
@@ -28,6 +29,8 @@ public interface CourseService {
     CourseResponseTele getCourse(String code);
 
     List<CourseResponse> getCourseAfterOrder();
+
+    Page<CourseResponse> searchCourse(SearchCourseRequest request);
 
     List<CourseResponse> searchingCourse(String title);
 

@@ -1,6 +1,5 @@
 package org.binaracademy.finalproject.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.model.request.ResetPasswordRequest;
 import org.binaracademy.finalproject.model.response.ResponseController;
 import org.binaracademy.finalproject.security.request.LoginRequest;
@@ -10,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @CrossOrigin("*")
-@Slf4j
 @RestController
 @RequestMapping(value = "/api/auth")
 public class AuthController {
@@ -38,7 +37,7 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Object> registerUser(@Validated @RequestBody SignupRequest signupRequest) {
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Success register account!", authService.registerUser(signupRequest));
     }

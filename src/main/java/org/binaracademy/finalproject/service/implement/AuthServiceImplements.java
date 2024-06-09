@@ -134,7 +134,7 @@ public class AuthServiceImplements implements AuthService {
                     .message("User registered successfully, name: " + users.getFullName())
                     .build();
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -165,7 +165,7 @@ public class AuthServiceImplements implements AuthService {
             return new JwtResponse(jwt, userDetails.getId(), userDetails.getFullName(),
                     userDetails.getEmail(), roles);
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -173,7 +173,7 @@ public class AuthServiceImplements implements AuthService {
     @Override
     public MessageResponse sendToken(String email) {
         try {
-            log.info("Trying send token to " + email + " for reset password");
+            log.info("Trying send token to {} for reset password", email);
             Users users = usersRepository.findByEmail(email)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
             ResetPassword resetPassword = resetPasswordService.createToken(email);
@@ -187,7 +187,7 @@ public class AuthServiceImplements implements AuthService {
             log.info("Send token for reset password successfully!");
             return MessageResponse.builder().message("Success sending a token for reset password!").build();
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -209,7 +209,7 @@ public class AuthServiceImplements implements AuthService {
             log.info("Refresh OTP success!");
             return MessageResponse.builder().message("Refresh OTP Success!").build();
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -236,7 +236,7 @@ public class AuthServiceImplements implements AuthService {
                     });
             log.info("Success verify account!");
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -263,7 +263,7 @@ public class AuthServiceImplements implements AuthService {
                     });
             log.info("Reset password successful!");
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }

@@ -76,6 +76,10 @@ public class SubjectServiceImplements implements SubjectService {
             Subject subjects = subjectRepository.findByCode(code)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found"));
 
+            if (subjectRepository.countByCodeForUpdate(request.getCode(), code)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Code already exists!");
+            }
+
             subjects.setTitle(request.getTitle() == null ? subjects.getTitle() : request.getTitle());
             subjects.setCode(request.getCode() == null ? subjects.getCode() : request.getCode());
             subjects.setDescription(request.getDescription() == null ? subjects.getDescription() : request.getDescription());

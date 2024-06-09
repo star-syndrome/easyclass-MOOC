@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.Set;
 
 @Data
@@ -17,7 +15,7 @@ import java.util.Set;
 public class SignupRequest {
 
     @NotBlank
-    @Size(max = 100)
+    @Size(min = 10, max = 25)
     private String fullName;
 
     @NotBlank

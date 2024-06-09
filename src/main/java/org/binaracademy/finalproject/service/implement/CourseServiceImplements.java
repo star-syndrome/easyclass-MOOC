@@ -3,6 +3,7 @@ package org.binaracademy.finalproject.service.implement;
 import lombok.extern.slf4j.Slf4j;
 import org.binaracademy.finalproject.model.Users;
 import org.binaracademy.finalproject.model.request.CreateCourseRequest;
+import org.binaracademy.finalproject.model.request.SearchCourseRequest;
 import org.binaracademy.finalproject.model.request.UpdateCourseRequest;
 import org.binaracademy.finalproject.model.response.*;
 import org.binaracademy.finalproject.DTO.CourseDTO;
@@ -14,15 +15,18 @@ import org.binaracademy.finalproject.service.OrderService;
 import org.binaracademy.finalproject.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.criteria.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,6 +124,10 @@ public class CourseServiceImplements implements CourseService {
             Course courses = courseRepository.findByCode(code)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
 
+            if (courseRepository.countByCodeForUpdate(updateCourse.getCode(), code)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Code already exists!");
+            }
+
             courses.setTitle(updateCourse.getTitle() == null ? courses.getTitle() : updateCourse.getTitle());
             courses.setCode(updateCourse.getCode() == null ? courses.getCode() : updateCourse.getCode());
             courses.setAbout(updateCourse.getAbout() == null ? courses.getAbout() : updateCourse.getAbout());
@@ -133,7 +141,7 @@ public class CourseServiceImplements implements CourseService {
             courses.setLinkTelegram(updateCourse.getLink() == null ? courses.getLinkTelegram() : updateCourse.getLink());
 
             courseRepository.save(courses);
-            log.info("Updating course with code: " + code + " successful!");
+            log.info("Updating course with code: {} successful!", code);
 
             return toCourseResponse(courses);
         } catch (Exception e) {
@@ -267,6 +275,29 @@ public class CourseServiceImplements implements CourseService {
             log.error("Error : " + e.getMessage());
             throw e;
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CourseResponse> searchCourse(SearchCourseRequest request) {
+        Specification<Course> specification = (root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (Objects.nonNull(request.getName())) {
+                predicates.add(builder.like(root.get("title"), "%" + request.getName() + "%"));
+            }
+            if (Objects.nonNull(request.getAbout())) {
+                predicates.add(builder.like(root.get("about"), "%" + request.getAbout() + "%"));
+            }
+            return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
+        };
+
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        Page<Course> courses = courseRepository.findAll(specification, pageable);
+        List<CourseResponse> courseResponses = courses.getContent().stream()
+                .map(this::toCourseResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(courseResponses, pageable, courses.getTotalElements());
     }
 
     @Override

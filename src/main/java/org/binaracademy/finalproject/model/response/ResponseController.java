@@ -22,6 +22,17 @@ public class ResponseController {
         return ResponseEntity.status(code).body(bodyResponse);
     }
 
+    public static ResponseEntity<Object> statusResponsePaging(HttpStatus code, String message, Object data, PagingResponse response) {
+        Map<String, Object> bodyResponse = new HashMap<>();
+        if (data != null) {
+            bodyResponse.put("data", data);
+        }
+        bodyResponse.put("status", code.value());
+        bodyResponse.put("message", message);
+        bodyResponse.put("paging", response);
+        return ResponseEntity.status(code).body(bodyResponse);
+    }
+
     public static ResponseEntity<Object> internalServerError(String message) {
         return statusResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, null);
     }
