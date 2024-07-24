@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("*")
@@ -18,27 +19,26 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping(
-            path = "/getDataCourseForOrder",
+            path = "/{code}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> getOrder(@RequestParam String code) {
+    public ResponseEntity<Object> getOrder(@PathVariable String code) {
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Success getting data course for order!", orderService.getDataOrder(code));
 
     }
 
     @PostMapping(
-            path = "/createOrder",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+    public ResponseEntity<Object> createOrder(@Validated @RequestBody CreateOrderRequest createOrderRequest) {
             return ResponseController.statusResponse(HttpStatus.OK,
                     "Success create an order!", orderService.createOrder(createOrderRequest));
     }
 
     @GetMapping(
-            path = "/getOrderTransactions",
+            path = "/history",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> getOrderTransactions() {

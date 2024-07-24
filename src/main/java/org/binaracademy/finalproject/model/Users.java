@@ -9,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.util.*;
 
 @Data
@@ -24,30 +23,13 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(min = 10, max = 25)
     private String fullName;
-
-    @NotBlank
-    @Size(max = 50)
-    @Email
     private String email;
-
-    @NotBlank
-    @Size(max = 120)
     private String password;
-
-    @Size(max = 15)
     private String phoneNumber;
-
-    @Size(max = 50)
     private String country;
-
-    @Size(max = 50)
     private String city;
-
     private String linkPhoto;
-
     private Boolean isActive;
 
     @ManyToMany(fetch = FetchType.EAGER)

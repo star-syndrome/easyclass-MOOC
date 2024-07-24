@@ -78,7 +78,7 @@ public class UserServiceImplements implements UserService {
 
             return toUserResponse(users);
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -97,7 +97,7 @@ public class UserServiceImplements implements UserService {
             log.info("Successfully deleted user!");
 
         } catch (Exception e){
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -133,7 +133,7 @@ public class UserServiceImplements implements UserService {
 
             return getUserResponse;
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -152,7 +152,7 @@ public class UserServiceImplements implements UserService {
             log.info("Successfully deleted user {}!", users.getEmail());
 
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -176,7 +176,7 @@ public class UserServiceImplements implements UserService {
             userRepository.save(users);
             log.info("Successfully changed password!");
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }

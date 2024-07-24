@@ -1,10 +1,11 @@
 package org.binaracademy.finalproject.model.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 
 @Data
@@ -13,8 +14,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateUserRequest {
 
+    @NotBlank
     private String fullName;
+
+    @NotBlank
     private String phoneNumber;
+
     private String country;
     private String city;
 }

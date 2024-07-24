@@ -103,7 +103,7 @@ public class CourseServiceImplements implements CourseService {
 
             return toAddCourseResponse(course);
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: {}" + e.getMessage());
             throw e;
         }
     }
@@ -125,7 +125,7 @@ public class CourseServiceImplements implements CourseService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
 
             if (courseRepository.countByCodeForUpdate(updateCourse.getCode(), code)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Code already exists!");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Course code already exists!");
             }
 
             courses.setTitle(updateCourse.getTitle() == null ? courses.getTitle() : updateCourse.getTitle());
@@ -145,7 +145,7 @@ public class CourseServiceImplements implements CourseService {
 
             return toCourseResponse(courses);
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -165,7 +165,7 @@ public class CourseServiceImplements implements CourseService {
             log.info("Deleting the course with course code: {} successful!", course.getCode());
 
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -174,7 +174,7 @@ public class CourseServiceImplements implements CourseService {
     @Transactional(readOnly = true)
     public CourseDTO courseDetailsFromCode(String code) {
         try {
-            log.info("Getting course detail information from course code: " + code);
+            log.info("Getting course detail information from course code: {}", code);
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
             Users users = userRepository.findByEmail(email)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
@@ -212,7 +212,7 @@ public class CourseServiceImplements implements CourseService {
                             .build())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -220,7 +220,7 @@ public class CourseServiceImplements implements CourseService {
     @Override
     @Transactional(readOnly = true)
     public List<GetAllCourseAdminResponse> getAllCourseAdmin() {
-        log.info("Getting all of list courses!");
+        log.info("Getting all of list courses for admin!");
         return courseRepository.findAll().stream()
                 .map(course -> GetAllCourseAdminResponse.builder()
                         .id(course.getId())
@@ -272,7 +272,7 @@ public class CourseServiceImplements implements CourseService {
                     .map(this::toCourseResponse)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            log.error("Error : " + e.getMessage());
+            System.out.println("Error : " + e.getMessage());
             throw e;
         }
     }
@@ -280,6 +280,7 @@ public class CourseServiceImplements implements CourseService {
     @Override
     @Transactional(readOnly = true)
     public Page<CourseResponse> searchCourse(SearchCourseRequest request) {
+        log.info("Searching courses!");
         Specification<Course> specification = (root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (Objects.nonNull(request.getName())) {
@@ -330,7 +331,7 @@ public class CourseServiceImplements implements CourseService {
     @Override
     @Transactional(readOnly = true)
     public List<CourseResponse> filterFullStack() {
-        log.info("Filtering Back End Course!");
+        log.info("Filtering Full Stack Course!");
         return courseRepository.filterFullStack().stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
@@ -399,9 +400,10 @@ public class CourseServiceImplements implements CourseService {
     public List<CourseResponse> searchingCourseAfterOrder(String title) {
         log.info("Searching Course After Order!");
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Users> users = userRepository.findByEmail(email);
+        Users users = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        return courseRepository.searchingCourseAfterOrder(users.get().getId(), title).stream()
+        return courseRepository.searchingCourseAfterOrder(users.getId(), title).stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }
@@ -411,9 +413,10 @@ public class CourseServiceImplements implements CourseService {
     public List<CourseResponse> filteringBackendAfterOrder() {
         log.info("Filtering Backend After Order");
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Users> users = userRepository.findByEmail(email);
+        Users users = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        return courseRepository.filterBackendAfterOrder(users.get().getId()).stream()
+        return courseRepository.filterBackendAfterOrder(users.getId()).stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }
@@ -423,9 +426,10 @@ public class CourseServiceImplements implements CourseService {
     public List<CourseResponse> filteringFrontendAfterOrder() {
         log.info("Filtering Frontend After Order");
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Users> users = userRepository.findByEmail(email);
+        Users users = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        return courseRepository.filterFrontendAfterOrder(users.get().getId()).stream()
+        return courseRepository.filterFrontendAfterOrder(users.getId()).stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }
@@ -435,9 +439,10 @@ public class CourseServiceImplements implements CourseService {
     public List<CourseResponse> filteringFullstackAfterOrder() {
         log.info("Filtering Fullstack After Order");
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Users> users = userRepository.findByEmail(email);
+        Users users = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
 
-        return courseRepository.filterFullstackAfterOrder(users.get().getId()).stream()
+        return courseRepository.filterFullstackAfterOrder(users.getId()).stream()
                 .map(this::toCourseResponse)
                 .collect(Collectors.toList());
     }

@@ -25,7 +25,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -65,7 +64,7 @@ public class OrderServiceImplements implements OrderService {
                             .build())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -108,7 +107,7 @@ public class OrderServiceImplements implements OrderService {
                     .message("Create order successfully!")
                     .build();
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -134,7 +133,7 @@ public class OrderServiceImplements implements OrderService {
                     .collect(Collectors.toList()));
             return orderDTO;
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -154,7 +153,7 @@ public class OrderServiceImplements implements OrderService {
             orderRepository.deleteByUsers(userRepository.findByEmail(email)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!")));
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -165,7 +164,7 @@ public class OrderServiceImplements implements OrderService {
             orderRepository.deleteByCourse(courseRepository.findByCode(code)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!")));
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }

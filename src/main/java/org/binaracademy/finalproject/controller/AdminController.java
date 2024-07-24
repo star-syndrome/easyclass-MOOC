@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -43,7 +44,7 @@ public class AdminController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> addCourse(@RequestBody CreateCourseRequest course){
+    public ResponseEntity<Object> addCourse(@Validated @RequestBody CreateCourseRequest course){
         return ResponseController.statusResponse(HttpStatus.OK, "Adding new course successful!",
                 courseService.addNewCourse(course));
     }
@@ -62,23 +63,23 @@ public class AdminController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> updateCourse(@PathVariable String code, @RequestBody UpdateCourseRequest request){
+    public ResponseEntity<Object> updateCourse(@PathVariable String code, @Validated @RequestBody UpdateCourseRequest request){
         courseService.updateCourse(request, code);
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Update course successful!", courseService.getCourse(code));
     }
 
     @GetMapping(
-            path = "/course/getByCode",
+            path = "/course/{code}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> getCourse(@RequestParam String code) {
+    public ResponseEntity<Object> getCourse(@PathVariable String code) {
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Success get course " + code, courseService.getCourse(code));
     }
 
     @GetMapping(
-            path = "/course/getAllCourse",
+            path = "/course",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(summary = "Get course yang ada ID-nya")
@@ -96,7 +97,7 @@ public class AdminController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> addSubject(@RequestBody CreateSubjectRequest request){
+    public ResponseEntity<Object> addSubject(@Validated @RequestBody CreateSubjectRequest request){
         return ResponseController.statusResponse(HttpStatus.OK, "Add new subject successful",
                 subjectService.addSubject(request));
     }
@@ -106,7 +107,7 @@ public class AdminController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> updateSubject(@PathVariable String code, @RequestBody UpdateSubjectRequest request){
+    public ResponseEntity<Object> updateSubject(@PathVariable String code, @Validated @RequestBody UpdateSubjectRequest request){
         subjectService.updateSubject(request, code);
         return ResponseController.statusResponse(HttpStatus.OK, "Update subject successful!",
                 subjectService.getSubject(code));
@@ -122,7 +123,7 @@ public class AdminController {
     }
 
     @GetMapping(
-            path = "/subject/getAllSubject",
+            path = "/subject",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> getAllSubject(){
@@ -131,10 +132,10 @@ public class AdminController {
     }
 
     @GetMapping(
-            path = "/subject/getByCode",
+            path = "/subject/{code}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> getSubjectByCode(@RequestParam String code){
+    public ResponseEntity<Object> getSubjectByCode(@PathVariable String code){
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Success getting subject", subjectService.getSubject(code));
     }
@@ -166,7 +167,7 @@ public class AdminController {
     }
 
     @GetMapping(
-            path = "/user/getAllUser",
+            path = "/user",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> getAllCourse(){
@@ -179,7 +180,7 @@ public class AdminController {
     }
 
     @DeleteMapping(
-            path = "/user/deleteUserForAdmin/{email}",
+            path = "/user/delete/{email}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> deleteUserForAdmin(@PathVariable String email) {
@@ -188,7 +189,7 @@ public class AdminController {
     }
 
     @GetMapping(
-            path = "/order/getAllOrderTransactions",
+            path = "/order/order-transaction",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> getAllOrder() {

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ public class UserController {
     private CloudinaryService cloudinaryService;
 
     @GetMapping(
-            path = "/get",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> getUserLogin(){
@@ -40,13 +40,12 @@ public class UserController {
     @PutMapping(value = "/update",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateUser(@RequestBody UpdateUserRequest users) {
+    public ResponseEntity<Object> updateUser(@Validated @RequestBody UpdateUserRequest users) {
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Update user successful!", userService.updateUsers(users));
     }
 
     @DeleteMapping(
-            path = "/delete",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> deleteUser(){
@@ -54,7 +53,7 @@ public class UserController {
         return ResponseController.statusResponse(HttpStatus.OK, "Deleting user successful!", null);
     }
 
-    @PostMapping(path = "/uploadImage")
+    @PostMapping(path = "/upload-image")
     public ResponseEntity<MessageResponse> uploadImage(@ModelAttribute UploadImageRequest uploadImageRequest) {
         log.info("Trying to upload profile picture!");
         return Optional.of(uploadImageRequest)
@@ -73,11 +72,11 @@ public class UserController {
     }
 
     @PatchMapping(
-            path = "/changePassword",
+            path = "/change-password",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+    public ResponseEntity<Object> changePassword(@Validated @RequestBody ChangePasswordRequest changePasswordRequest) {
         userService.changePassword(changePasswordRequest);
         return ResponseController.statusResponse(HttpStatus.OK, "Change Password successful!", null);
     }

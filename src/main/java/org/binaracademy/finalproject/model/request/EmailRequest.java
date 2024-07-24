@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -12,6 +14,9 @@ import lombok.NoArgsConstructor;
 public class EmailRequest {
 
     private String subject;
+
+    @NotBlank
     private String recipient;
+
     private String content;
 }

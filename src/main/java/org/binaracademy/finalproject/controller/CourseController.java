@@ -24,7 +24,7 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping(
-            path = "/searchCourse",
+            path = "/search",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> searchCourse(@RequestParam(required = false) String name,
@@ -48,7 +48,6 @@ public class CourseController {
     }
 
     @GetMapping(
-            path = "/getAll",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> getAllCourse(){
@@ -61,16 +60,16 @@ public class CourseController {
     }
 
     @GetMapping(
-            path = "/detailsFromCode",
+            path = "/{code}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> courseDetailFromCode(@RequestParam String code) {
+    public ResponseEntity<Object> courseDetailFromCode(@PathVariable String code) {
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Success getting all information about course " + code, courseService.courseDetailsFromCode(code));
     }
 
     @GetMapping(
-            path = "/getCourseOrder",
+            path = "/course-order",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> getCourseOrder() {
@@ -78,7 +77,7 @@ public class CourseController {
                 "Success getting course order!", courseService.getCourseAfterOrder());
     }
 
-    @GetMapping(value = "/searchingCourse", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/searching-course", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> searchingCourse(@RequestParam String title) {
         List<CourseResponse> courseResponse = courseService.searchingCourse(title);
         try {

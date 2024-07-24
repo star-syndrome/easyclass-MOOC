@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.binaracademy.finalproject.model.Course;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -20,8 +21,15 @@ public class CreateSubjectRequest {
     @NotBlank
     private String code;
 
+    @NotBlank
     private String title;
+
+    @NotBlank
     private String linkVideo;
+
+    @NotBlank
     private String description;
+
+    @NotNull
     private Boolean isPremium;
 }

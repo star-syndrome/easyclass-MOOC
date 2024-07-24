@@ -27,7 +27,7 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest login) {
+    public ResponseEntity<Object> authenticateUser(@Validated @RequestBody LoginRequest login) {
         return ResponseController.statusResponse(HttpStatus.OK,
                 "Success login!", authService.authenticateUser(login));
     }
@@ -46,7 +46,7 @@ public class AuthController {
             path = "/verifyOTP",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Object> otpVerify(@Valid @RequestParam String email, @RequestParam String otp) {
+    public ResponseEntity<Object> otpVerify(@RequestParam String email, @RequestParam String otp) {
         authService.verifyAccountWithOTP(email, otp);
         return ResponseController.statusResponse(HttpStatus.OK, "Success verify account!", null);
     }

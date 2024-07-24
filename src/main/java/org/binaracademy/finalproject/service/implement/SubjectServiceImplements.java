@@ -64,7 +64,7 @@ public class SubjectServiceImplements implements SubjectService {
 
             return toSubjectResponse(subject);
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -77,7 +77,7 @@ public class SubjectServiceImplements implements SubjectService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found"));
 
             if (subjectRepository.countByCodeForUpdate(request.getCode(), code)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Code already exists!");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Subject code already exists!");
             }
 
             subjects.setTitle(request.getTitle() == null ? subjects.getTitle() : request.getTitle());
@@ -87,11 +87,11 @@ public class SubjectServiceImplements implements SubjectService {
             subjects.setIsPremium(request.getIsPremium() == null ? subjects.getIsPremium() : request.getIsPremium());
 
             subjectRepository.save(subjects);
-            log.info("Updating subject with code: " + code + " successfully!");
+            log.info("Updating subject with code: {}", code + " successfully!");
 
             return toSubjectResponse(subjects);
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -128,7 +128,7 @@ public class SubjectServiceImplements implements SubjectService {
                             .build())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found!"));
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }
@@ -140,10 +140,10 @@ public class SubjectServiceImplements implements SubjectService {
             if (!subjectRepository.existsByCode(code)) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found");
             }
-            log.info("Deleted Subject where subject code: " + code + " successfully!");
+            log.info("Deleted Subject where subject code: {}", code + " successfully!");
             subjectRepository.deleteSubjectByCode(code);
         } catch (Exception e) {
-            log.error("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             throw e;
         }
     }

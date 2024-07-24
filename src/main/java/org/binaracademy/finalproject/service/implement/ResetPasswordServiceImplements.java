@@ -36,7 +36,7 @@ public class ResetPasswordServiceImplements implements ResetPasswordService {
 
         if (resetPassword == null) {
             resetPassword = new ResetPassword();
-        };
+        }
 
         resetPassword.setUsers(users);
         resetPassword.setExpiryDate(Instant.now().plusMillis(tokenDurationMs));
